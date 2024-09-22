@@ -265,25 +265,23 @@ namespace PMS.Helpers.Service
                             ClientId = userData.ClientId,
                         };
                         var token = GenerateJWTToken(user);
-                        //var token = GenerateJwtToken(user).Result;
 
                         return new
                         {
-                            userObj = user,
-                            token = token
+                            succeed = true,
+                            token = token,
+                            name = userData.Name,
+                            ClientId = userData.ClientId
                         };
-                        /*throw new UnauthorizedAccessException("Invalid Email or Password!!!");*/
                     }
                     else
                     {
                         return Result.Failure(new List<string> { "UserId and Password Dose Not Match" });
-                        //throw new UnauthorizedAccessException("UserId and Password Dose Not Match");
                     }
                 }
                 else
                 {
                     return Result.Failure(new List<string> { "User Not Found" });
-                    /*throw new UnauthorizedAccessException("User Not Found");*/
                 }
             }
         }
