@@ -270,8 +270,7 @@ namespace PMS.Helpers.Service
                         {
                             succeed = true,
                             token = token,
-                            name = userData.Name,
-                            ClientId = userData.ClientId
+                            name = userData.Name
                         };
                     }
                     else
