@@ -6,6 +6,7 @@ using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Account.Command;
 using PMS.Application.Request.Account.Query;
 using PMS.Application.Request.Configuration.Query;
+using PMS.ViewModel;
 using System.Collections.Generic;
 
 namespace PMS.Controllers
@@ -33,6 +34,13 @@ namespace PMS.Controllers
         public async Task<IActionResult> MedicineListByName(string name)
         {
             var result = await _mediator.Send(new MedicineListByName(name));
+            return Ok(result); 
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ClientWiseMedicine(string medicineName, string getAll, int currentPage, int itemsPerPage)
+        {
+            var result = await _mediator.Send(new GetClientWiseMedicine(medicineName, getAll, currentPage, itemsPerPage));
             return Ok(result); 
         }
 

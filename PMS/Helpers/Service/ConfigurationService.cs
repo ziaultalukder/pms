@@ -150,6 +150,36 @@ namespace PMS.Helpers.Service
                 return supplierList.ToList();
             }
         }
+        public async Task<PagedList<ClientWiseMedicineViewModel>> ClientWiseMedicine(GetClientWiseMedicine request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string conditionClause = " ";
+                string query = "select ClientWiseMedine_VW.*, count(*) over() as TotalItems from ClientWiseMedine_VW where ClientId ="+_currentUserService.ClientId;
+                
+                if (!string.IsNullOrEmpty(request.MedicineName))
+                {
+                    query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '%" + request.MedicineName.Trim() + "%' ";
+                    conditionClause = " WHERE ";
+                }
 
+                if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
+                {
+                    request.ItemsPerPage = 0;
+                }
+                else
+                {
+                    query += " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                }
+                var clientWiseMedicine = await context.QueryAsync<ClientWiseMedicineViewModel>(query);
+                string totalItemQuery = "SELECT  top 1 TotalItems FROM ( " + query + ")  AS result  ORDER BY TotalItems";
+                int totalItem = context.QueryFirstOrDefault<int>(totalItemQuery);
+                if (request.ItemsPerPage == 0)
+                {
+                    request.ItemsPerPage = totalItem;
+                }
+                return new PagedList<ClientWiseMedicineViewModel>(clientWiseMedicine.ToList(), request.CurrentPage, request.ItemsPerPage, totalItem);
+            }
+        }
     }
 }

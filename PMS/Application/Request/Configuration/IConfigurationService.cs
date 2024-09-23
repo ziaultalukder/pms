@@ -12,5 +12,6 @@ namespace PMS.Application.Request.Configuration
         Task<PagedList<Client>> GetAllClient(GetAllClient request);
         Task<PagedList<Supplier>> GetSupplier(GetSupplier request);
         Task<IEnumerable<MedicineListByNameViewModel>> MedicineListByName(MedicineListByName request);
+        Task<PagedList<ClientWiseMedicineViewModel>> ClientWiseMedicine(GetClientWiseMedicine request);
     }
 }
