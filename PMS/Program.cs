@@ -33,6 +33,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
+builder.Services.AddCors(p => p.AddPolicy("PMS", policy =>
+{
+    policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 builder.Services.AddAuthentication(cfg => {
     cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,15 +72,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
-app.UseCors(option =>
-{
-    option.AllowAnyOrigin();
-    option.AllowAnyMethod();
-    option.AllowAnyHeader();
-});
-
+app.UseCors("PMS");
 app.Run();

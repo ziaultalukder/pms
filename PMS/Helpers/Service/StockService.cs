@@ -39,7 +39,7 @@ namespace PMS.Helpers.Service
                     string query = "StockIn";
                     DynamicParameters parameter = new DynamicParameters();
                     parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
-                    parameter.Add("@ClientId", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                     parameter.Add("@StockDate", request.StockDate, DbType.DateTime, ParameterDirection.Input);
                     parameter.Add("@SupplierId", request.SupplierId, DbType.Int32, ParameterDirection.Input);
                     parameter.Add("@TotalPrice", request.TotalPrice, DbType.Int32, ParameterDirection.Input);
@@ -59,7 +59,8 @@ namespace PMS.Helpers.Service
                             string queryDetails = "StockInDetails";
                             DynamicParameters parameterForDetails = new DynamicParameters();
                             parameterForDetails.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
-                            parameterForDetails.Add("@StockInfoId", res, DbType.String, ParameterDirection.Input);
+                            parameterForDetails.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                            parameterForDetails.Add("@StockInfoId", res, DbType.Int32, ParameterDirection.Input);
                             parameterForDetails.Add("@MedicineId", item.MedicineId, DbType.String, ParameterDirection.Input);
                             parameterForDetails.Add("@NewQty", item.NewQty, DbType.Decimal, ParameterDirection.Input);
                             parameterForDetails.Add("@SalesPrice", item.SalesPrice, DbType.Int32, ParameterDirection.Input);
