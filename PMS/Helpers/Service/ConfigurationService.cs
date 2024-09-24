@@ -144,10 +144,16 @@ namespace PMS.Helpers.Service
         {
             using (var context = _dapperContext.CreateConnection())
             {
-                string conditionClause = " ";
-                string query = "select SL, ManufacturerName, CONCAT(BrandName, ' - ' ,Strength) BrandName, Price, count(*) over() as TotalItems from MedicineList where BrandName like '" + request.Name.Trim() + "%'";
-                var supplierList = await context.QueryAsync<MedicineListByNameViewModel>(query);
-                return supplierList.ToList();
+                if(request.Name is not null)
+                {
+                    string query = "select * from MedicineListForStock_VW where BrandName like '" + request.Name.Trim() + "%'";
+                    var supplierList = await context.QueryAsync<MedicineListByNameViewModel>(query);
+                    return supplierList.ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
         public async Task<PagedList<ClientWiseMedicineViewModel>> ClientWiseMedicine(GetClientWiseMedicine request)
