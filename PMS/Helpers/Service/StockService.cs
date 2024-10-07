@@ -12,7 +12,7 @@ namespace PMS.Helpers.Service
 {
     public class StockService : IStockService
     {
-        private readonly DapperContext _dapperContext; 
+        private readonly DapperContext _dapperContext;
         private readonly ICurrentUserService _currentUserService;
         //string Id = "";
         public StockService(DapperContext dapperContext, ICurrentUserService currentUserService)
@@ -24,62 +24,69 @@ namespace PMS.Helpers.Service
         }
         public async Task<Result> MedicineStock(AddNewStock request)
         {
-            try
+            if (request.StockInDetails.Count == 0)
             {
-                if (request.StockInDetails.Count == 0)
-                {
-                    return Result.Failure(new List<string> { "Please Stock Minimum One Variant " });
-                }
-                else if (request.SupplierId == 0)
-                {
-                    return Result.Failure(new List<string>{"Select Supplier "});
-                }
-                using (var context = _dapperContext.CreateConnection())
-                {
-                    string query = "StockIn";
-                    DynamicParameters parameter = new DynamicParameters();
-                    parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
-                    parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
-                    parameter.Add("@StockDate", request.StockDate, DbType.DateTime, ParameterDirection.Input);
-                    parameter.Add("@SupplierId", request.SupplierId, DbType.Int32, ParameterDirection.Input);
-                    parameter.Add("@TotalPrice", request.TotalPrice, DbType.Int32, ParameterDirection.Input);
-                    parameter.Add("@DiscountPercentage", request.DiscountPercentage, DbType.Int32, ParameterDirection.Input);
-                    parameter.Add("@DiscountTaka", request.DiscountTaka, DbType.Decimal, ParameterDirection.Input);
-                    parameter.Add("@DiscountValue", request.DiscountValue, DbType.Decimal, ParameterDirection.Input);
-                    parameter.Add("@isActive", request.IsActive, DbType.String, ParameterDirection.Input);
-                    parameter.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
-                    parameter.Add("@P_MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
-                    var result = await context.ExecuteAsync(query, parameter);
-                    int res = parameter.Get<int>("@P_MESSAGE");
-
-                    if (res > 0)
-                    {
-                        foreach (var item in request.StockInDetails)
-                        {
-                            string queryDetails = "StockInDetails";
-                            DynamicParameters parameterForDetails = new DynamicParameters();
-                            parameterForDetails.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
-                            parameterForDetails.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
-                            parameterForDetails.Add("@StockInfoId", res, DbType.Int32, ParameterDirection.Input);
-                            parameterForDetails.Add("@MedicineId", item.MedicineId, DbType.String, ParameterDirection.Input);
-                            parameterForDetails.Add("@NewQty", item.NewQty, DbType.Decimal, ParameterDirection.Input);
-                            parameterForDetails.Add("@SalesPrice", item.SalesPrice, DbType.Int32, ParameterDirection.Input);
-                            parameterForDetails.Add("@PruchasePrice", item.PruchasePrice, DbType.Decimal, ParameterDirection.Input);
-                            parameterForDetails.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
-                            await context.ExecuteAsync(queryDetails, parameterForDetails);
-                        }
-                        return Result.Success("Medicine Stock Successfully");
-                    }
-                    else
-                    {
-                        return Result.Failure(new List<string> { "Medicine Stock Failed " });
-                    }
-                }
-                
+                return Result.Failure(new List<string> { "Please Stock Minimum One Variant " });
             }
-            catch (Exception ex)
+            else if (request.SupplierId == 0)
             {
-                return Result.Failure(new List<string> { ex.Message });
+                return Result.Failure(new List<string> { "Select Supplier " });
+            }
+            using (var context = _dapperContext.CreateConnection())
+            {
+                context.Open();
+                using (var transactionScope = context.BeginTransaction())
+                {
+                    try
+                    {
+                        string query = "StockIn";
+                        DynamicParameters parameter = new DynamicParameters();
+                        parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+                        parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                        parameter.Add("@StockDate", request.StockDate, DbType.DateTime, ParameterDirection.Input);
+                        parameter.Add("@SupplierId", request.SupplierId, DbType.Int32, ParameterDirection.Input);
+                        parameter.Add("@TotalPrice", request.TotalPrice, DbType.Int32, ParameterDirection.Input);
+                        parameter.Add("@DiscountPercentage", request.DiscountPercentage, DbType.Int32, ParameterDirection.Input);
+                        parameter.Add("@DiscountTaka", request.DiscountTaka, DbType.Decimal, ParameterDirection.Input);
+                        parameter.Add("@DiscountValue", request.DiscountValue, DbType.Decimal, ParameterDirection.Input);
+                        parameter.Add("@isActive", request.IsActive, DbType.String, ParameterDirection.Input);
+                        parameter.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
+                        parameter.Add("@P_MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
+                        var result = await context.ExecuteAsync(query, parameter, transaction: transactionScope);
+                        int res = parameter.Get<int>("@P_MESSAGE");
+
+                        if (res > 0)
+                        {
+                            foreach (var item in request.StockInDetails)
+                            {
+                                string queryDetails = "StockInDetails";
+                                DynamicParameters parameterForDetails = new DynamicParameters();
+                                parameterForDetails.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+                                parameterForDetails.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                                parameterForDetails.Add("@StockInfoId", res, DbType.Int32, ParameterDirection.Input);
+                                parameterForDetails.Add("@MedicineId", item.MedicineId, DbType.String, ParameterDirection.Input);
+                                parameterForDetails.Add("@NewQty", item.NewQty, DbType.Decimal, ParameterDirection.Input);
+                                parameterForDetails.Add("@SalesPrice", item.SalesPrice, DbType.Int32, ParameterDirection.Input);
+                                parameterForDetails.Add("@PruchasePrice", item.PruchasePrice, DbType.Decimal, ParameterDirection.Input);
+                                parameterForDetails.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
+                                await context.ExecuteAsync(queryDetails, parameterForDetails, transaction: transactionScope);
+                            }
+
+                            transactionScope.Commit();
+                            return Result.Success("Medicine Stock Successfully");
+                        }
+                        else
+                        {
+                            transactionScope.Rollback();
+                            return Result.Failure(new List<string> { "Medicine Stock Failed " });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Rollback();
+                        return Result.Failure(new List<string> { ex.Message });
+                    }
+                }
             }
         }
     }
