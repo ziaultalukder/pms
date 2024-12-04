@@ -6,14 +6,12 @@ namespace PMS.Application.Request.Account.Command
     public class ChangePassword : IRequest<Result>
     {
         public int Id { get; set; }
-        public string ContactNo { get; set; }
         public string OldPassword { get; set; }
         public string NewPassword { get; set; }
 
-        public ChangePassword(int id, string contactNo, string oldPassword, string newPassword)
+        public ChangePassword(int id, string oldPassword, string newPassword)
         {
             Id = id;
-            ContactNo = contactNo;
             OldPassword = oldPassword;
             NewPassword = newPassword;
         }

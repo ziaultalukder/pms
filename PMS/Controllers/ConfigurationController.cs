@@ -67,14 +67,9 @@ namespace PMS.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ChangePassword(ChangePassword command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
 
         [HttpPost("[action]")]
+        [AllowAnonymous]
         public async Task<IActionResult> AddOrEditClient(AddOrEditClient command)
         {
             var result = await _mediator.Send(command);

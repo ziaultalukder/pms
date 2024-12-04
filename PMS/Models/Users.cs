@@ -10,15 +10,13 @@ namespace PMS.Domain.Models
     public class Users:CommonEntity
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Mobile { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Mobile { get; set; } = string.Empty;
         public int ClientId { get; set; }
-        public string Password { get; set; }
-        public string PasswordValue { get; set; }
-        public string PasswordKey { get; set; }
+        public string Password { get; set; }=string.Empty;
         public int RoleId { get; set; }
-        public string IsActive { get; set; }
-        public string Status { get; set; }
+        public string IsActive { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
     }
 }

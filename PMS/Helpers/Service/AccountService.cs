@@ -57,13 +57,11 @@ namespace PMS.Helpers.Service
                     }
                 }
 
-                var hasPass = Helper.HashPassword(request.Password);
-
-                string passwordValue = hasPass.Value;
-                string passwordKey = hasPass.Key;
+                request.Password = MD5Encryption.GetMD5HashData(request.Password);
 
                 string query = "SP_Client";
                 DynamicParameters parameter = new DynamicParameters();
+                
                 parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
                 parameter.Add("@ShopName", request.ShopName, DbType.String, ParameterDirection.Input);
@@ -71,21 +69,16 @@ namespace PMS.Helpers.Service
                 parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Email", request.Email, DbType.String, ParameterDirection.Input);
                 parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
-
-                parameter.Add("@PasswordValue", passwordValue, DbType.String, ParameterDirection.Input);
-                parameter.Add("@PasswordKey", passwordKey, DbType.String, ParameterDirection.Input);
-
+                parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
                 parameter.Add("@CreateBy", Id, DbType.String, ParameterDirection.Input);
                 parameter.Add("@MESSAGE", "", DbType.Int32, ParameterDirection.Output);
+
                 var result = await context.ExecuteAsync(query, parameter);
                 int res = parameter.Get<int>("@MESSAGE");
-                if (res == 1)
+                
+                if (res > 0)
                 {
-                    return Result.Success("Client Save Success");
-                }
-                else if (res == 2)
-                {
-                    return Result.Success("Client Update Success");
+                    return Result.Success("Success");
                 }
                 else
                 {
@@ -111,11 +104,7 @@ namespace PMS.Helpers.Service
                     }
                 }
 
-                Users users = new Users();
-                var hasPass = Helper.HashPassword(request.Password);
-
-                users.PasswordValue = hasPass.Value;
-                users.PasswordKey = hasPass.Key;
+                request.Password = MD5Encryption.GetMD5HashData(request.Password);
 
                 string query = "SP_Users";
                 DynamicParameters parameter = new DynamicParameters();
@@ -124,8 +113,7 @@ namespace PMS.Helpers.Service
                 parameter.Add("@Emaill", request.Email, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Mobile", request.Mobile, DbType.String, ParameterDirection.Input);
                 parameter.Add("@ClientId", request.ClientId, DbType.Int32, ParameterDirection.Input);
-                parameter.Add("@PasswordValue", users.PasswordValue, DbType.String, ParameterDirection.Input);
-                parameter.Add("@PasswordKey", users.PasswordKey, DbType.String, ParameterDirection.Input);
+                parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
 
                 parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Status", request.Status, DbType.String, ParameterDirection.Input);
@@ -160,36 +148,27 @@ namespace PMS.Helpers.Service
             {
                 using (var context = _dapperContext.CreateConnection())
                 {
-                    if (request.Id == Convert.ToInt32(Id))
+                    var parameter = new { Id = request.Id };
+                    string query = "select * from Users where Id = @Id ";
+                    var user = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
+                    if (user == null)
                     {
-                        string query = "select * from Users where Mobile = '" + request.ContactNo + "' and Id = " + request.Id + " ";
-                        var user = await context.QueryFirstOrDefaultAsync<Users>(query);
-                        if (user == null)
-                        {
-                            return Result.Failure(new List<string> { "Invalid Current User!!!!" });
-                        }
-
-                        var password = PasswordHelper.HashPassword(request.OldPassword, user.PasswordKey);
-                        if (user.PasswordValue == password)
-                        {
-                            var hashPassword = PasswordHelper.HashPassword(request.NewPassword);
-                            user.Password = hashPassword.Value;
-                            user.PasswordKey = hashPassword.Key;
-
-                            string updatePasswordQuery = "update Users set PasswordValue = '" + user.Password + "', PasswordKey = '" + user.PasswordKey + "' where Id = " + user.Id + " ";
-                            var res = await context.QueryAsync(updatePasswordQuery);
-                            /*if (res)
-                            {
-                                return Result.Success("Password Changed!");
-                            }*/
-                            return Result.Success("Password Changed!");
-                        }
-                        else
-                        {
-                            return Result.Failure(new List<string> { "Invalid Old Password!!!!" });
-                        }
+                        return Result.Failure(new List<string> { "Invalid Current User!!!!" });
                     }
-                    throw new NotImplementedException();
+
+                    request.OldPassword = MD5Encryption.GetMD5HashData(request.OldPassword);
+                    if (user.Password == request.OldPassword)
+                    {
+                        var updateQryParameter = new { Password = MD5Encryption.GetMD5HashData(request.NewPassword), UserId = request.Id };
+                        string updatePasswordQuery = "update Users set Password = @Password where Id = @UserId ";
+                        var res = await context.QueryAsync(updatePasswordQuery, updateQryParameter);
+
+                        return Result.Success("success");
+                    }
+                    else
+                    {
+                        return Result.Failure(new List<string> { "Invalid Old Password!!!!" });
+                    }
                 }
             }
             catch (Exception ex)
@@ -249,13 +228,17 @@ namespace PMS.Helpers.Service
 
             using (var context = _dapperContext.CreateConnection())
             {
-                string query = "SELECT * FROM Users where Mobile = '" + request.ContactNo + "' ";
-                var userData = await context.QueryFirstOrDefaultAsync<Users>(query);
+                var parameter = new {ContactNO = request.ContactNo};
+                string query = "SELECT * FROM Users where Mobile = @ContactNo";
+                var userData = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
 
                 if (userData != null)
                 {
-                    var hasPass = Helper.HashPassword(request.Password, userData.PasswordKey);
-                    if (userData.PasswordValue == hasPass)
+                    /*var hasPass = Helper.HashPassword(request.Password, userData.PasswordKey);*/
+                    
+                    request.Password = MD5Encryption.GetMD5HashData(request.Password);
+                    
+                    if (userData.Password == request.Password)
                     {
                         var user = new UsersViewModel
                         {
