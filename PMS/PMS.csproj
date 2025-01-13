@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Request\Configuration\Commnd\" />
     <Folder Include="Application\Request\Sales\Query\" />
   </ItemGroup>
 

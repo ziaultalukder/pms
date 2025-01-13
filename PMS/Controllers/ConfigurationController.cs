@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.VisualBasic;
 using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Account.Command;
 using PMS.Application.Request.Account.Query;
+using PMS.Application.Request.Configuration.Command;
 using PMS.Application.Request.Configuration.Query;
 using PMS.ViewModel;
 using System.Collections.Generic;
@@ -17,11 +20,33 @@ namespace PMS.Controllers
     public class ConfigurationController : ControllerBase
     {
         private readonly IMediator _mediator;
+        /*private readonly IMemoryCache _cache;*/
         public ConfigurationController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PopularMedicine()
+        {
+            /*var dd = _cache.Get("Data");
+            if(dd != null)
+            {
+                return Ok(dd);
+            }
+            List<string> strings = new List<string>
+            {
+                "dddd",
+                "sdfsdfsdf",
+                "dsdsd"
+            };
+            _cache.Set("Data", strings);*/
+
+            var result = await _mediator.Send(new PopularMedicine());
+            return Ok(result);
+        }
+        
         [HttpGet("[action]")]
         public async Task<IActionResult> MedicineList(string name, string getAll,int currentPage, int itemsPerPage)
         {
@@ -70,7 +95,14 @@ namespace PMS.Controllers
 
         [HttpPost("[action]")]
         [AllowAnonymous]
-        public async Task<IActionResult> AddOrEditClient(AddOrEditClient command)
+        public async Task<IActionResult> AddClient(AddClient command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateClient(UpdateClient command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

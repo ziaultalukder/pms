@@ -1,12 +1,15 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Configuration;
+using PMS.Application.Request.Configuration.Command;
 using PMS.Application.Request.Configuration.Query;
 using PMS.Context;
 using PMS.Domain.Models;
 using PMS.Helpers.Interface;
 using PMS.Models;
 using PMS.ViewModel;
+using System.Data;
 
 namespace PMS.Helpers.Service
 {
@@ -186,6 +189,117 @@ namespace PMS.Helpers.Service
                     request.ItemsPerPage = totalItem;
                 }
                 return new PagedList<ClientWiseMedicineViewModel>(clientWiseMedicine.ToList(), request.CurrentPage, request.ItemsPerPage, totalItem);
+            }
+        }
+        public async Task<Result> UpdateClient(UpdateClient request)
+        {
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                return Result.Failure(new List<string> { "Name is required" });
+            }
+            if (string.IsNullOrEmpty(request.ShopName))
+            {
+                return Result.Failure(new List<string> { "ShopName is required" });
+            }
+            if (string.IsNullOrEmpty(request.ContactNo))
+            {
+                return Result.Failure(new List<string> { "ContactNo is required" });
+            }
+
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "UpdateClient";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ShopName", request.ShopName, DbType.String, ParameterDirection.Input);
+                parameter.Add("@Address", request.Address, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
+                parameter.Add("@Email", request.Email, DbType.String, ParameterDirection.Input);
+                parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
+                parameter.Add("@MESSAGE", "", DbType.Int32, ParameterDirection.Output);
+
+                var result = await context.ExecuteAsync(query, parameter);
+                int res = parameter.Get<int>("@MESSAGE");
+
+                if (res > 0)
+                {
+                    return Result.Success("Update Success");
+                }
+                else
+                {
+                    return Result.Failure(new List<string> { "Client save failed" });
+                }
+            }
+        }
+        public async Task<Result> AddClient(AddClient request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.Name))
+                {
+                    return Result.Failure(new List<string> { "Name is required" });
+                }
+                if (string.IsNullOrEmpty(request.ShopName))
+                {
+                    return Result.Failure(new List<string> { "ShopName is required" });
+                }
+                if (string.IsNullOrEmpty(request.ContactNo))
+                {
+                    return Result.Failure(new List<string> { "ContactNo is required" });
+                }
+                if (string.IsNullOrEmpty(request.Password))
+                {
+                    return Result.Failure(new List<string> { "Password is required" });
+                }
+
+                using (var context = _dapperContext.CreateConnection())
+                {
+                    var qryparameter = new { ContactNo = request.ContactNo };
+                    string queryForCheckUserId = "select * from Client where ContactNo = @ContactNo";
+                    var client = await context.QueryFirstOrDefaultAsync<Client>(queryForCheckUserId, qryparameter);
+                    if (client != null)
+                    {
+                        return Result.Failure(new List<string> { "ContactNo Already Exist" });
+                    }
+
+                    request.Password = MD5Encryption.GetMD5HashData(request.Password);
+
+                    string query = "SP_Client";
+                    DynamicParameters parameter = new DynamicParameters();
+
+                    parameter.Add("@Id", 0, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@ShopName", request.ShopName, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@Address", request.Address, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@Email", request.Email, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@CreateBy", Id, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@MESSAGE", "", DbType.Int32, ParameterDirection.Output);
+
+                    var result = await context.ExecuteAsync(query, parameter);
+                    int res = parameter.Get<int>("@MESSAGE");
+
+                    return Result.Success("Save Success");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<IEnumerable<PopularMedicineViewModel>> PopularMedicine()
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "PopularMedicineList";
+                DynamicParameters parameter = new DynamicParameters();
+
+                var result = await context.QueryAsync<PopularMedicineViewModel>(query);
+                return result.ToList();
             }
         }
     }

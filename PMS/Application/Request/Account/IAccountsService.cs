@@ -10,7 +10,6 @@ namespace PMS.Application.Request.Account
 {
     public interface IAccountsService
     {
-        Task<Result> AddOrEditClient(AddOrEditClient request);
         Task<Result> AddOrEditUser(AddOrEditUser request);
         Task<AdminProfileViewModel> AdminProfile(GetAdminProfile request);
         Task<Result> ChangePassword(ChangePassword request);

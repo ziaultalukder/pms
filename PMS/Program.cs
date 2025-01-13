@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
+/*builder.Services.AddMemoryCache();*/
 
 builder.Services.AddScoped<DapperContext>();
 builder.Services.AddScoped<IAccountsService, AccountService>();
@@ -32,11 +33,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-
-builder.Services.AddCors(p => p.AddPolicy("PMS", policy =>
-{
-    policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-}));
 
 builder.Services.AddAuthentication(cfg => {
     cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,6 +54,17 @@ builder.Services.AddAuthentication(cfg => {
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -67,14 +74,16 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+/*if (app.Environment.IsDevelopment())
+{*/
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+/*}*/
+
+app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseCors("PMS");
+
 app.Run();

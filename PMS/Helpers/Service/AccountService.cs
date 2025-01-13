@@ -26,66 +26,6 @@ namespace PMS.Helpers.Service
             _configuration = configuration;
             _currentUserService = currentUserService;
         }
-        public async Task<Result> AddOrEditClient(AddOrEditClient request)
-        {
-            if (string.IsNullOrEmpty(request.Name))
-            {
-                return Result.Failure(new List<string> { "Name is required" });
-            }
-            if (string.IsNullOrEmpty(request.ShopName))
-            {
-                return Result.Failure(new List<string> { "ShopName is required" });
-            }
-            if (string.IsNullOrEmpty(request.ContactNo))
-            {
-                return Result.Failure(new List<string> { "ContactNo is required" });
-            }
-            if (string.IsNullOrEmpty(request.Password))
-            {
-                return Result.Failure(new List<string> { "Password is required" });
-            }
-
-            using (var context = _dapperContext.CreateConnection())
-            {
-                if (request.Id == 0)
-                {
-                    string queryForCheckUserId = "select * from Client where ContactNo =" + request.ContactNo;
-                    var client = await context.QueryFirstOrDefaultAsync<Client>(queryForCheckUserId);
-                    if (client != null)
-                    {
-                        return Result.Failure(new List<string> { "ContactNo Already Exist" });
-                    }
-                }
-
-                request.Password = MD5Encryption.GetMD5HashData(request.Password);
-
-                string query = "SP_Client";
-                DynamicParameters parameter = new DynamicParameters();
-                
-                parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
-                parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
-                parameter.Add("@ShopName", request.ShopName, DbType.String, ParameterDirection.Input);
-                parameter.Add("@Address", request.Address, DbType.String, ParameterDirection.Input);
-                parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
-                parameter.Add("@Email", request.Email, DbType.String, ParameterDirection.Input);
-                parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
-                parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
-                parameter.Add("@CreateBy", Id, DbType.String, ParameterDirection.Input);
-                parameter.Add("@MESSAGE", "", DbType.Int32, ParameterDirection.Output);
-
-                var result = await context.ExecuteAsync(query, parameter);
-                int res = parameter.Get<int>("@MESSAGE");
-                
-                if (res > 0)
-                {
-                    return Result.Success("Success");
-                }
-                else
-                {
-                    return Result.Failure(new List<string> { "Client save failed" });
-                }
-            }
-        }
         public async Task<Result> AddOrEditUser(AddOrEditUser request)
         {
             if (string.IsNullOrEmpty(request.Mobile))
