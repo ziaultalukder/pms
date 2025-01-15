@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PMS.Application.Request.Account;
+using PMS.Application.Request.Category;
 using PMS.Application.Request.Configuration;
 using PMS.Application.Request.Sales;
 using PMS.Application.Request.Stock;
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 //builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddControllers();

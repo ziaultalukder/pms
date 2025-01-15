@@ -22,7 +22,16 @@ namespace PMS.Application.Request.Configuration.Query
         public async Task<IEnumerable<PopularMedicineViewModel>> 
             Handle(PopularMedicine request, CancellationToken cancellationToken)
         {
-            return await configurationService.PopularMedicine();
+            try
+            {
+                return await configurationService.PopularMedicine();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
         }
     }
 }

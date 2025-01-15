@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Request\Category\Command\" />
     <Folder Include="Application\Request\Sales\Query\" />
   </ItemGroup>
 
