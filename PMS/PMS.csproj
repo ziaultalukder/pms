@@ -21,6 +21,7 @@
   <ItemGroup>
     <Folder Include="Application\Request\Category\Command\" />
     <Folder Include="Application\Request\Sales\Query\" />
+    <Folder Include="Images\Doctor\" />
   </ItemGroup>
 
 </Project>

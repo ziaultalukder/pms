@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PMS.Application.Request.Account;
 using PMS.Application.Request.Category;
 using PMS.Application.Request.Configuration;
+using PMS.Application.Request.Doctor;
 using PMS.Application.Request.Sales;
 using PMS.Application.Request.Stock;
 using PMS.Context;
@@ -26,6 +27,7 @@ builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 //builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddControllers();

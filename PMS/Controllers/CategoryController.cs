@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PMS.Application.Common.Pagins;
@@ -12,7 +14,6 @@ namespace PMS.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
-        /*private readonly IMemoryCache _cache;*/
         public CategoryController(IMediator mediator)
         {
             _mediator = mediator;
