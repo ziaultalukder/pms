@@ -67,5 +67,13 @@ namespace PMS.Controllers
             var result = await _mediator.Send(new GetPopularDoctor());
             return Ok(result);
         }
+        
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDoctorDegree()
+        {
+            var result = await _mediator.Send(new GetDoctorDegree());
+            return Ok(result);
+        }
     }
 }

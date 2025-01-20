@@ -90,6 +90,17 @@ namespace PMS.Helpers.Service
                 return result.ToList();
             }
         }
+
+        public async Task<IEnumerable<DoctorsDegree>> GetDoctorDegree()
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "select Id, Name from Degree";
+                var result = await context.QueryAsync<DoctorsDegree>(query);
+                return result.ToList();
+            }
+        }
+
         public async Task<IEnumerable<GetPopularDoctorViewModel>> GetPopularDoctor()
         {
             using (var context = _dapperContext.CreateConnection())
