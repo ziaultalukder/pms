@@ -20,8 +20,10 @@
 
   <ItemGroup>
     <Folder Include="Application\Request\Category\Command\" />
+    <Folder Include="Application\Request\Hospital\Command\" />
     <Folder Include="Application\Request\Sales\Query\" />
     <Folder Include="Images\Doctor\" />
+    <Folder Include="Images\Hospital\" />
   </ItemGroup>
 
 </Project>

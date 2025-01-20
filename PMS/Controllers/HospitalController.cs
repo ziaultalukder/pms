@@ -1,18 +1,44 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PMS.Application.Request.Hospital.Query;
 
 namespace PMS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class HospitalController : ControllerBase
     {
         private readonly IMediator _mediator;
-        /*private readonly IMemoryCache _cache;*/
         public HospitalController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPopularHospital()
+        {
+            var result = await _mediator.Send(new PopularHospital());
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDivisionAndDistrictWiseHospital(int divisionId, int districtId)
+        {
+            var result = await _mediator.Send(new GetDivisionAndDistrictWiseHospital(divisionId, districtId));
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetHospitalById(int id)
+        {
+            var result = await _mediator.Send(new GetHospitalById(id));
+            return Ok(result);
         }
     }
 }
