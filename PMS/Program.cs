@@ -86,10 +86,13 @@ var app = builder.Build();
     app.UseSwaggerUI();
 /*}*/
 
+app.UseStaticFiles();
 app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+/*app.UseStaticFiles();*/
 
 app.Run();

@@ -13,5 +13,9 @@
         public string Description { get; set; }
         public string VisitingHoure { get; set; }
         public string Chember { get; set; }
+        public string Degrees { get; set; }
+        public string Specialist { get; set; }
+        public string Designation { get; set; }
+        public string Hospital { get; set; }
     }
 }
