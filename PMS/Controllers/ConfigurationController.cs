@@ -71,6 +71,22 @@ namespace PMS.Controllers
         }
         
         [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> MedicineListByNameForWeb(string name)
+        {
+            var result = await _mediator.Send(new MedicineListByName(name));
+            return Ok(result); 
+        }
+        
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> MedicineListByNameForApp(string name)
+        {
+            var result = await _mediator.Send(new MedicineListByName(name));
+            return Ok(result); 
+        }
+        
+        [HttpGet("[action]")]
         public async Task<IActionResult> ClientWiseMedicine(string medicineName, string getAll, int currentPage, int itemsPerPage)
         {
             var result = await _mediator.Send(new GetClientWiseMedicine(medicineName, getAll, currentPage, itemsPerPage));
