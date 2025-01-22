@@ -6,11 +6,9 @@ namespace PMS.Application.Request.Hospital.Query
     public class GetDivisionAndDistrictWiseHospital : IRequest<IEnumerable<DivisionAndDistrictWiseHospitalViewModel>>
     {
         public int DivisionId { get; set; }
-        public int DistrictId { get; set; }
-        public GetDivisionAndDistrictWiseHospital(int divisionId, int districtId)
+        public GetDivisionAndDistrictWiseHospital(int divisionId)
         {
             DivisionId = divisionId;
-            DistrictId = districtId;
         }
     }
 

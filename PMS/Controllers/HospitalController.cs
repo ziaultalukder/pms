@@ -27,9 +27,9 @@ namespace PMS.Controllers
         
         [HttpGet("[action]")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetDivisionAndDistrictWiseHospital(int divisionId, int districtId)
+        public async Task<IActionResult> GetDivisionAndDistrictWiseHospital(int divisionId)
         {
-            var result = await _mediator.Send(new GetDivisionAndDistrictWiseHospital(divisionId, districtId));
+            var result = await _mediator.Send(new GetDivisionAndDistrictWiseHospital(divisionId));
             return Ok(result);
         }
         

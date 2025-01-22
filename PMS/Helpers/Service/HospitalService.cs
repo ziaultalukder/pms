@@ -29,7 +29,6 @@ namespace PMS.Helpers.Service
                 string query = "GetDivisionAndDistrictWiseHospital";
                 DynamicParameters parameter = new DynamicParameters();
                 parameter.Add("@DivisionId", request.DivisionId, DbType.Int32, ParameterDirection.Input);
-                parameter.Add("@DistrictId", request.DistrictId, DbType.Int32, ParameterDirection.Input);
 
                 var result = await context.QueryAsync<DivisionAndDistrictWiseHospitalViewModel>(query, parameter);
                 return result.ToList();
