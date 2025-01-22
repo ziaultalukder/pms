@@ -48,6 +48,14 @@ namespace PMS.Controllers
         }
         
         [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDivision()
+        {
+            var result = await _mediator.Send(new GetDivision());
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
         public async Task<IActionResult> MedicineList(string name, string getAll,int currentPage, int itemsPerPage)
         {
             var result = await _mediator.Send(new MedicineList(name, getAll,currentPage, itemsPerPage));

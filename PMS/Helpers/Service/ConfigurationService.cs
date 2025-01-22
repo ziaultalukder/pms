@@ -302,5 +302,15 @@ namespace PMS.Helpers.Service
                 return result.ToList();
             }
         }
+
+        public async Task<IEnumerable<Division>> GetDivision()
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "SELECT * FROM Division";
+                var result = await context.QueryAsync<Division>(query);
+                return result.ToList();
+            }
+        }
     }
 }
