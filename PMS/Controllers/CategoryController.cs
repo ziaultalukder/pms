@@ -25,5 +25,12 @@ namespace PMS.Controllers
             var result = await _mediator.Send(new GetMedicalDepartmentName());
             return Ok(result);
         }
+        
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCategoryById(int categoryTypeId)
+        {
+            var result = await _mediator.Send(new GetCategoryById(categoryTypeId));
+            return Ok(result);
+        }
     }
 }
