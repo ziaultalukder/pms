@@ -149,7 +149,7 @@ namespace PMS.Helpers.Service
             {
                 if(request.Name is not null)
                 {
-                    string qry = "declare @clientId int\r\nset @clientId = "+_currentUserService.ClientId+";\r\nselect \r\n\tM.SL, \r\n\tM.ManufacturerName,\r\n\tCONCAT(M.BrandName, ' - ' ,M.Strength) BrandName,\r\n\tISNULL(abc.SalesPrice, 0) SalesPrice, \r\n\tISNULL(abc.PurchasePrice, 0) PurchasePrice,\r\n\tcase \r\n\twhen ISNULL(abc.ClientId, 0) = "+_currentUserService.ClientId+"\r\n\tthen ISNULL(abc.Quantity, 0) else 0\r\n\tend as Quantity\r\nfrom (\r\n\tselect MedicineId, ClientId, Quantity, PurchasePrice, SalesPrice from ClientWiseMedicine where ClientId ="+_currentUserService.ClientId+"\r\n) abc right join MedicineList M on M.SL = abc.MedicineId\r\nwhere M.BrandName like '"+ request.Name.Trim() + "%'";
+                    string qry = "declare @clientId int\r\nset @clientId = "+_currentUserService.ClientId+ ";\r\nselect \r\n\tM.SL, \r\n\tM.ManufacturerName,\r\n\tCONCAT(M.BrandName, ' - ' ,M.Strength, ' - ', DosageDescription) BrandName,\r\n\tISNULL(abc.SalesPrice, 0) SalesPrice, \r\n\tISNULL(abc.PurchasePrice, 0) PurchasePrice,\r\n\tcase \r\n\twhen ISNULL(abc.ClientId, 0) = " + _currentUserService.ClientId+"\r\n\tthen ISNULL(abc.Quantity, 0) else 0\r\n\tend as Quantity\r\nfrom (\r\n\tselect MedicineId, ClientId, Quantity, PurchasePrice, SalesPrice from ClientWiseMedicine where ClientId ="+_currentUserService.ClientId+"\r\n) abc right join MedicineList M on M.SL = abc.MedicineId\r\nwhere M.BrandName like '"+ request.Name.Trim() + "%'";
                     
                     var medicineNameList = await context.QueryAsync<MedicineListByNameViewModel>(qry);
                     return medicineNameList.ToList();
