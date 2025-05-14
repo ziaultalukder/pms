@@ -165,11 +165,11 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 string conditionClause = " ";
-                string query = "select ClientWiseMedine_VW.*, count(*) over() as TotalItems from ClientWiseMedine_VW where ClientId ="+_currentUserService.ClientId;
+                string query = "select ClientWiseMedine_VW.*, count(*) over() as TotalItems from ClientWiseMedine_VW";
                 
                 if (!string.IsNullOrEmpty(request.MedicineName))
                 {
-                    query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '%" + request.MedicineName.Trim() + "%' ";
+                    query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '" + request.MedicineName.Trim() + "%' ";
                     conditionClause = " WHERE ";
                 }
 
@@ -179,7 +179,7 @@ namespace PMS.Helpers.Service
                 }
                 else
                 {
-                    query += " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " and ClientId = " + _currentUserService.ClientId+" order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 var clientWiseMedicine = await context.QueryAsync<ClientWiseMedicineViewModel>(query);
                 string totalItemQuery = "SELECT  top 1 TotalItems FROM ( " + query + ")  AS result  ORDER BY TotalItems";
@@ -290,7 +290,6 @@ namespace PMS.Helpers.Service
                 return Result.Failure(new List<string> { ex.Message });
             }
         }
-
         public async Task<IEnumerable<PopularMedicineViewModel>> PopularMedicine()
         {
             using (var context = _dapperContext.CreateConnection())
@@ -302,7 +301,6 @@ namespace PMS.Helpers.Service
                 return result.ToList();
             }
         }
-
         public async Task<IEnumerable<Division>> GetDivision()
         {
             using (var context = _dapperContext.CreateConnection())

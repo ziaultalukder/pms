@@ -24,5 +24,12 @@ namespace PMS.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetClientWiseMedicineForSales(AddNewSales command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }
