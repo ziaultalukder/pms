@@ -1,8 +1,11 @@
 ﻿using Dapper;
+using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Sales;
 using PMS.Application.Request.Sales.Command;
+using PMS.Application.Request.Sales.Query;
 using PMS.Context;
 using PMS.Helpers.Interface;
+using PMS.ViewModel;
 using System.Data;
 using System.Security.Claims;
 
@@ -13,7 +16,6 @@ namespace PMS.Helpers.Service
         private readonly DapperContext _dapperContext;
         private readonly ICurrentUserService _currentUserService;
 
-        //string Id = "";
         public SalesService(DapperContext dapperContext, ICurrentUserService currentUserService)
         {
             _dapperContext = dapperContext;
@@ -21,6 +23,25 @@ namespace PMS.Helpers.Service
 
             /*Id = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);*/
         }
+
+        public async Task<IEnumerable<GetClientWiseMedicineForSalesViewModel>> GetClientWiseMedicineForSales(GetClientWiseMedicineForSales request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string conditionClause = " ";
+                string query = "select * from GetClientWiseMedicineForSales_VW WHERE ClientId =" + _currentUserService.ClientId;
+
+                if (!string.IsNullOrEmpty(request.MedicineName))
+                {
+                    conditionClause = "AND ";
+                    query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '" + request.MedicineName.Trim() + "%' ";
+                }
+
+                var clientWiseMedicine = await context.QueryAsync<GetClientWiseMedicineForSalesViewModel>(query);                
+                return clientWiseMedicine;
+            }
+        }
+
         public async Task<Result> MedicineSales(AddNewSales request)
         {
             try

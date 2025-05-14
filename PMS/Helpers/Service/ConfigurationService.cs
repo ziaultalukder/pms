@@ -165,13 +165,13 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 string conditionClause = " ";
-                string query = "select ClientWiseMedine_VW.*, count(*) over() as TotalItems from ClientWiseMedine_VW";
+                string query = "select ClientWiseMedine_VW.*, count(*) over() as TotalItems from ClientWiseMedine_VW WHERE ClientId =" + _currentUserService.ClientId;
                 
-                if (!string.IsNullOrEmpty(request.MedicineName))
+                /*if (!string.IsNullOrEmpty(request.MedicineName))
                 {
                     query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '" + request.MedicineName.Trim() + "%' ";
                     conditionClause = " WHERE ";
-                }
+                }*/
 
                 if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
                 {
@@ -179,7 +179,7 @@ namespace PMS.Helpers.Service
                 }
                 else
                 {
-                    query += " and ClientId = " + _currentUserService.ClientId+" order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 var clientWiseMedicine = await context.QueryAsync<ClientWiseMedicineViewModel>(query);
                 string totalItemQuery = "SELECT  top 1 TotalItems FROM ( " + query + ")  AS result  ORDER BY TotalItems";
