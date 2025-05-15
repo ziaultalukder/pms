@@ -66,7 +66,7 @@ namespace PMS.Helpers.Service
                     parameter.Add("@SubTotal", request.SubTotal, DbType.Decimal, ParameterDirection.Input);
                     parameter.Add("@GrandTotal", request.GrandTotal, DbType.Decimal, ParameterDirection.Input);
 
-                    parameter.Add("@ClientId", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
 
                     parameter.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
                     parameter.Add("@MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
@@ -80,7 +80,7 @@ namespace PMS.Helpers.Service
                             string queryDetails = "SP_SalesDetails";
                             DynamicParameters parameterForDetails = new DynamicParameters();
                             parameterForDetails.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
-                            parameterForDetails.Add("@ClientId", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                            parameterForDetails.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                             parameterForDetails.Add("@SalesInfoId", res, DbType.Int32, ParameterDirection.Input);
                             parameterForDetails.Add("@MedicineId", item.MedicineId, DbType.Int32, ParameterDirection.Input);
 
