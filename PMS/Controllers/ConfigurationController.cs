@@ -110,7 +110,7 @@ namespace PMS.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAdminProfile()
+        public async Task<IActionResult> GetProfile()
         {
             var result = await _mediator.Send(new GetAdminProfile());
             return Ok(result);

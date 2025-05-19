@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Configuration.Query;
 using PMS.Application.Request.Sales.Command;
 using PMS.Application.Request.Sales.Query;
@@ -31,6 +32,14 @@ namespace PMS.Controllers
         public async Task<ActionResult> GetClientWiseMedicineForSales(string medicineName)
         {
             var result = await _mediator.Send(new GetClientWiseMedicineForSales(medicineName));
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetSales(string startDate, string endDate, int currentPage, int itemsPerPage)
+        {
+            var result = await _mediator.Send(new GetSales(startDate, endDate, currentPage, itemsPerPage));
+            PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
         }
     }

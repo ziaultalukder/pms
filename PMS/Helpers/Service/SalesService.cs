@@ -4,6 +4,7 @@ using PMS.Application.Request.Sales;
 using PMS.Application.Request.Sales.Command;
 using PMS.Application.Request.Sales.Query;
 using PMS.Context;
+using PMS.Domain.Models;
 using PMS.Helpers.Interface;
 using PMS.ViewModel;
 using System.Data;
@@ -42,6 +43,20 @@ namespace PMS.Helpers.Service
             }
         }
 
+        public async Task<PagedList<GetSalesViewModel>> GetSales(GetSales request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "GetSales";
+                DynamicParameters parameter = new DynamicParameters();
+                parameter.Add("@StartDate", request.StartDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@EndDate", request.EndDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@PageNo", (request.CurrentPage - 1) * request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@ItemPerPage", request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryAsync<GetSalesViewModel>(query, parameter);
+                return new PagedList<GetSalesViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, result.Count());
+            }
+        }
         public async Task<Result> MedicineSales(AddNewSales request)
         {
             try
@@ -57,8 +72,8 @@ namespace PMS.Helpers.Service
                     DynamicParameters parameter = new DynamicParameters();
                     parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
 
-                    parameter.Add("@CustomerName", request.CustomerName, DbType.String, ParameterDirection.Input);
-                    parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@CustomerName", request.CustomerName == string.Empty ? null : request.CustomerName, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@ContactNo", request.ContactNo == string.Empty ? null : request.ContactNo, DbType.String, ParameterDirection.Input);
 
                     parameter.Add("@TotalTaka", request.TotalTaka, DbType.Decimal, ParameterDirection.Input);
                     parameter.Add("@DiscountPercentage", request.DiscountPercentage, DbType.Int32, ParameterDirection.Input);

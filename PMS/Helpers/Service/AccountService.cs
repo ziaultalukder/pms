@@ -71,17 +71,16 @@ namespace PMS.Helpers.Service
                 }
             }
         }
-        public Task<AdminProfileViewModel> AdminProfile(GetAdminProfile request)
+        public async Task<ProfileViewModel> AdminProfile(GetAdminProfile request)
         {
-            /*
-             * 
-             * 
-             * string query = "SELECT * from get_admin_view where AdminId = " + _currentUserService.UserId;
-               var res = await GetSingleAsync<AdminProfileViewModel>(query, null);
-               return res;
-            */
-            return null;
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "SELECT [Id] ,[Name] ,[ShopName] ,[Address] ,[ContactNo] ,[Email] ,[CreateDate] FROM [dbo].[Client] WHERE Id = " + _currentUserService.ClientId;
+                var res = await context.QueryFirstOrDefaultAsync<ProfileViewModel>(query);
+                return res;
+            }
         }
+
         public async Task<Result> ChangePassword(ChangePassword request)
         {
             try

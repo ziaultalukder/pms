@@ -11,7 +11,7 @@ namespace PMS.Application.Request.Account
     public interface IAccountsService
     {
         Task<Result> AddOrEditUser(AddOrEditUser request);
-        Task<AdminProfileViewModel> AdminProfile(GetAdminProfile request);
+        Task<ProfileViewModel> AdminProfile(GetAdminProfile request);
         Task<Result> ChangePassword(ChangePassword request);
         Task<Result> SendToken(SendToken request);
         Task<object> UserLogin(UserLogin request);

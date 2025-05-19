@@ -1,10 +1,13 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Stock;
 using PMS.Application.Request.Stock.Command;
+using PMS.Application.Request.Stock.Query;
 using PMS.Context;
 using PMS.Helpers.Interface;
 using PMS.Models;
+using PMS.ViewModel;
 using System.Data;
 using System.Security.Claims;
 
@@ -22,6 +25,22 @@ namespace PMS.Helpers.Service
 
             //Id = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+
+        public async Task<PagedList<GetStockViewModel>> GetStocks(GetStock request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "GetStock";
+                DynamicParameters parameter = new DynamicParameters();
+                parameter.Add("@StartDate", request.StartDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@EndDate", request.EndDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@PageNo", (request.CurrentPage - 1) * request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@ItemPerPage", request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryAsync<GetStockViewModel>(query, parameter);
+                return new PagedList<GetStockViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, result.Count());
+            }
+        }
+
         public async Task<Result> MedicineStock(AddNewStock request)
         {
             if (request.StockInDetails.Count == 0)
