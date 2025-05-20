@@ -29,13 +29,6 @@ namespace PMS.Controllers
             return Ok(result);
         }
         
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetStock(GetStock command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
         [HttpGet("[action]")]
         public async Task<ActionResult> GetStock(string startDate, string endDate, int currentPage, int itemsPerPage)
         {
