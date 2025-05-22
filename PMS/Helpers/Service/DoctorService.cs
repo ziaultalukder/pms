@@ -16,8 +16,8 @@ namespace PMS.Helpers.Service
     {
         private readonly DapperContext _dapperContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IHostEnvironment _hostEnvironment;
-        public DoctorService(DapperContext dapperContext, ICurrentUserService currentUserService, IHostEnvironment hostEnvironment)
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostEnvironment;
+        public DoctorService(DapperContext dapperContext, ICurrentUserService currentUserService, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostEnvironment)
         {
             _dapperContext = dapperContext;
             _currentUserService = currentUserService;

@@ -40,7 +40,7 @@ namespace PMS.Helpers.Service
                     var userData = await context.QueryFirstOrDefaultAsync<Users>(queryForCheckUserId);
                     if (userData != null)
                     {
-                        return Result.Failure(new List<string> { "UserId Already Exist" });
+                        return Result.Failure(new List<string> { "Mobile No Already Exist" });
                     }
                 }
 
@@ -52,12 +52,12 @@ namespace PMS.Helpers.Service
                 parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Emaill", request.Email, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Mobile", request.Mobile, DbType.String, ParameterDirection.Input);
-                parameter.Add("@ClientId", request.ClientId, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@ClientId", request.ClientId == 0 ? null : _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
 
                 parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Status", request.Status, DbType.String, ParameterDirection.Input);
-                parameter.Add("@CreateBy", Id, DbType.String, ParameterDirection.Input);
+                parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Result", "", DbType.String, ParameterDirection.Output);
 
                 var result = await context.ExecuteAsync(query, parameter);

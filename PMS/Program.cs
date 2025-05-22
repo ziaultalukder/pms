@@ -6,6 +6,7 @@ using PMS.Application.Request.Category;
 using PMS.Application.Request.Configuration;
 using PMS.Application.Request.Doctor;
 using PMS.Application.Request.Hospital;
+using PMS.Application.Request.Post;
 using PMS.Application.Request.Sales;
 using PMS.Application.Request.Stock;
 using PMS.Context;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IHospitalService, HospitalService>();
+builder.Services.AddScoped<IPostService, PostService>();
 //builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddControllers();

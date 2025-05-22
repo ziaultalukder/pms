@@ -9,6 +9,7 @@ namespace PMS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -16,24 +17,29 @@ namespace PMS.Controllers
         {
             _mediator = mediator;
         }
+        
         [HttpPost("[action]")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(UserLogin command)
         {
             var data = await _mediator.Send(command);
             return Ok(data);
         }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> UserRegistration(AddOrEditUser command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> ForgotPassword(ForgotPassword command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePassword command)
         {

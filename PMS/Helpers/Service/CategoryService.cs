@@ -17,7 +17,6 @@ namespace PMS.Helpers.Service
             _dapperContext = dapperContext;
             _currentUserService = currentUserService;
         }
-
         public async Task<IEnumerable<Category>> GetCategoryByTypeId(GetCategoryById request)
         {
             using (var context = _dapperContext.CreateConnection())
@@ -27,7 +26,6 @@ namespace PMS.Helpers.Service
                 return result.ToList();
             }
         }
-
         public async Task<IEnumerable<MedicalDepartmentNameViewModel>> GetMedicalDepartmentName()
         {
             using (var context = _dapperContext.CreateConnection())

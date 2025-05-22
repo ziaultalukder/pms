@@ -9,7 +9,7 @@ namespace PMS.Helpers
 {
     public class Helper
     {
-        public static async Task<Result> SaveSingleImage(string imageFile, string imagePathConstant, IHostEnvironment hostEnvironment)
+        public static async Task<Result> SaveSingleImage(string imageFile, string imagePathConstant, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostEnvironment)
         {
             var imagePath = ImageDirectory.CheckDirectory(hostEnvironment, imagePathConstant);
             if (imageFile != null || imageFile != "")

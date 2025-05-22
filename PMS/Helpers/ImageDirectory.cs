@@ -2,9 +2,10 @@
 {
     public class ImageDirectory
     {
-        public static string CheckDirectory(IHostEnvironment hostEnvironment, string path)
+        public static string CheckDirectory(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostEnvironment, string path)
         {
-            var hostingPath = hostEnvironment.ContentRootPath;
+            var hostingPath = hostEnvironment.WebRootPath;
+            /*var hostingPath = hostEnvironment.ContentRootPath;*/
             var uploadPath = hostingPath + path;
 
             if (!Directory.Exists(uploadPath))
@@ -13,15 +14,17 @@
             }
             return uploadPath;
         }
-        public static bool IsFileExists(IHostEnvironment hostEnvironment, string path)
+        public static bool IsFileExists(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostEnvironment, string path)
         {
-            var hostingPath = hostEnvironment.ContentRootPath;
+            var hostingPath = hostEnvironment.WebRootPath;
+            /*var hostingPath = hostEnvironment.ContentRootPath;*/
             var uploadPath = hostingPath + path;
             return System.IO.File.Exists(uploadPath);
         }
-        public static void RemoveExistingFile(IHostEnvironment hostEnvironment, string imageName, string imagePath)
+        public static void RemoveExistingFile(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostEnvironment, string imageName, string imagePath)
         {
-            var hostingPath = hostEnvironment.ContentRootPath;
+            var hostingPath = hostEnvironment.WebRootPath;
+            /*var hostingPath = hostEnvironment.ContentRootPath;*/
             var uploadPath = hostingPath + imagePath + imageName;
 
             if (System.IO.File.Exists(uploadPath))
