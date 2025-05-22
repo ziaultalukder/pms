@@ -120,7 +120,7 @@ namespace PMS.Helpers.Service
                 var result = await context.ExecuteAsync(query, parameter);
                 int res = parameter.Get<int>("@MESSAGE");
 
-                return Result.Success("Save Success");
+                return Result.Success("Update Success");
             }
         }
         public async Task<PagedList<GetPostViewModel>> GetPost(GetPost request)
