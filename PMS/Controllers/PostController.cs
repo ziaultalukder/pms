@@ -38,7 +38,6 @@ namespace PMS.Controllers
         }
         
         [HttpPost("[action]")]
-        [AllowAnonymous]
         public async Task<ActionResult> UpdatePost(UpdatePost command)
         {
             var result = await _mediator.Send(command);
