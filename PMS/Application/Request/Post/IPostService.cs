@@ -10,6 +10,7 @@ namespace PMS.Application.Request.Post
     {
         Task<Result> CreatePost(CreatePost request);
         Task<PagedList<GetPostViewModel>> GetPost(GetPost request);
+        Task<GetPostByIdViewModel> GetPostById(GetPostById request);
         Task<Result> UpdatePost(UpdatePost request);
     }
 }

@@ -68,7 +68,6 @@ namespace PMS.Helpers.Service
                 return Result.Success("Save Success");
             }
         }
-
         public async Task<Result> UpdatePost(UpdatePost request)
         {
             using (var context = _dapperContext.CreateConnection())
@@ -146,6 +145,16 @@ namespace PMS.Helpers.Service
                 var postList = await context.QueryAsync<GetPostViewModel>(query);
 
                 return new PagedList<GetPostViewModel>(postList.ToList(), request.CurrentPage, request.ItemsPerPage, postList.Count());
+            }
+        }
+
+        public async Task<GetPostByIdViewModel> GetPostById(GetPostById request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                var parameters = new { Id = request.Id };
+                var sql = "SELECT * from GetBlogPost where Id = @Id";
+                return await context.QueryFirstOrDefaultAsync<GetPostByIdViewModel>(sql, parameters);
             }
         }
     }

@@ -29,7 +29,15 @@ namespace PMS.Controllers
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
         }
-        
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetPostById(int id)
+        {
+            var result = await _mediator.Send(new GetPostById(id));
+            return Ok(result);
+        }
+
         [HttpPost("[action]")]
         public async Task<ActionResult> CreatePost(CreatePost command)
         {
