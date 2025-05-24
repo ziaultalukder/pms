@@ -12,6 +12,6 @@
         public string Category { get; set; }
         public string Users { get; set; }
         public string CreateDate { get; set; }
-
+        public string Tags { get; set; }
     }
 }

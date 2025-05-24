@@ -147,7 +147,6 @@ namespace PMS.Helpers.Service
                 return new PagedList<GetPostViewModel>(postList.ToList(), request.CurrentPage, request.ItemsPerPage, postList.Count());
             }
         }
-
         public async Task<GetPostByIdViewModel> GetPostById(GetPostById request)
         {
             using (var context = _dapperContext.CreateConnection())
