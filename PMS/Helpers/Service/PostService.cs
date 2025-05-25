@@ -72,33 +72,36 @@ namespace PMS.Helpers.Service
         {
             using (var context = _dapperContext.CreateConnection())
             {
-                if (ImageDirectory.IsFileExists(_hostEnvironment, request.FeaturedImage))
+                /*featured image start*/
+                if (!ImageDirectory.IsFileExists(_hostEnvironment, request.FeaturedImage))
                 {
-                    //return Result.Success(sellerProfile.SellerImageUrl);
+                    var featuredImage = Helper.SaveSingleImage(request.FeaturedImage, Constant.POST_IMAGE, _hostEnvironment);
+                    if (!featuredImage.Result.Succeed)
+                    {
+                        return Result.Failure(new List<string> { "Post Image Not Saved!!!!" });
+                    }
+                    else
+                    {
+                        request.FeaturedImage = featuredImage.Result.Message;
+                    }
                 }
-                var featuredImage = Helper.SaveSingleImage(request.FeaturedImage, Constant.POST_IMAGE, _hostEnvironment);
-                if (!featuredImage.Result.Succeed)
-                {
-                    return Result.Failure(new List<string> { "Post Image Not Saved!!!!" });
-                }
-                else
-                {
-                    request.FeaturedImage = featuredImage.Result.Message;
-                }
+                /*featured image end*/
 
-                if (ImageDirectory.IsFileExists(_hostEnvironment, request.Image))
+                /*post image start*/
+                if (!ImageDirectory.IsFileExists(_hostEnvironment, request.Image))
                 {
-                    //return Result.Success(sellerProfile.SellerImageUrl);
+                    var postImage = Helper.SaveSingleImage(request.Image, Constant.POST_IMAGE, _hostEnvironment);
+                    if (!postImage.Result.Succeed)
+                    {
+                        return Result.Failure(new List<string> { "Post Image Not Saved!!!!" });
+                    }
+                    else
+                    {
+                        request.Image = postImage.Result.Message;
+                    }
                 }
-                var postImage = Helper.SaveSingleImage(request.Image, Constant.POST_IMAGE, _hostEnvironment);
-                if (!postImage.Result.Succeed)
-                {
-                    return Result.Failure(new List<string> { "Post Image Not Saved!!!!" });
-                }
-                else
-                {
-                    request.Image = postImage.Result.Message;
-                }
+                
+                /*post image end*/
 
                 string query = "UpdateBlogPorst";
                 DynamicParameters parameter = new DynamicParameters();
