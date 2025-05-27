@@ -59,7 +59,6 @@ namespace PMS.Controllers
         }
 
         [HttpGet("[action]")]
-        [AllowAnonymous]
         public async Task<ActionResult> GetSalesInfoForRefund(string invoiceNo)
         {
             var result = await _mediator.Send(new GetSalesInfoForRefund(invoiceNo));
