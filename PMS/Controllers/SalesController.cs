@@ -28,6 +28,21 @@ namespace PMS.Controllers
             return Ok(result);
         }
         
+        [HttpPost("[action]")]
+        public async Task<ActionResult> SalesRefund(SalesRefund command)
+        {
+            var result = await _mediator.Send(command);
+            if(result.Succeed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(StatusCodes.Status400BadRequest);
+            }
+            
+        }
+        
         [HttpGet("[action]")]
         public async Task<ActionResult> GetClientWiseMedicineForSales(string medicineName)
         {
@@ -40,6 +55,14 @@ namespace PMS.Controllers
         {
             var result = await _mediator.Send(new GetSales(startDate, endDate, currentPage, itemsPerPage));
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetSalesInfoForRefund(string invoiceNo)
+        {
+            var result = await _mediator.Send(new GetSalesInfoForRefund(invoiceNo));
             return Ok(result);
         }
     }

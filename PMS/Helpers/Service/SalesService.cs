@@ -38,8 +38,30 @@ namespace PMS.Helpers.Service
                     query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '" + request.MedicineName.Trim() + "%' ";
                 }
 
-                var clientWiseMedicine = await context.QueryAsync<GetClientWiseMedicineForSalesViewModel>(query);                
+                var clientWiseMedicine = await context.QueryAsync<GetClientWiseMedicineForSalesViewModel>(query);
                 return clientWiseMedicine;
+            }
+        }
+
+        public async Task<GetSalesByInvoiceNo> GetSaleByInvoice(GetSalesInfoForRefund request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "GetSalesInfoByInvoiceNo";
+                DynamicParameters parameter = new DynamicParameters();
+                parameter.Add("@InvoiceNo", request.InvoiceNo, DbType.String, ParameterDirection.Input);
+                var result = await context.QueryFirstOrDefaultAsync<GetSalesByInvoiceNo>(query, parameter);
+                
+                string query1 = "GetSalesDetailsBySalesInfoId";
+                DynamicParameters parameter1 = new DynamicParameters();
+                parameter1.Add("@SalesInfoId", 1017, DbType.String, ParameterDirection.Input);
+                var result1 = await context.QueryAsync<SalesDetailsViewModel>(query1, parameter1);
+
+                GetSalesByInvoiceNo getSalesByInvoiceNo = result;
+                getSalesByInvoiceNo.SalesDetailsViewModels = result1;
+
+                return getSalesByInvoiceNo;
+                
             }
         }
 
@@ -51,6 +73,7 @@ namespace PMS.Helpers.Service
                 DynamicParameters parameter = new DynamicParameters();
                 parameter.Add("@StartDate", request.StartDate, DbType.String, ParameterDirection.Input);
                 parameter.Add("@EndDate", request.EndDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@PageNo", (request.CurrentPage - 1) * request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@ItemPerPage", request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
                 var result = await context.QueryAsync<GetSalesViewModel>(query, parameter);
@@ -125,6 +148,29 @@ namespace PMS.Helpers.Service
             catch (Exception ex)
             {
                 return Result.Failure(new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<Result> SalesRefund(SalesRefund request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "InsertSalesRefund";
+                DynamicParameters parameter = new DynamicParameters();
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+
+                parameter.Add("@SalesDetailsId", request.SalesDetailsId, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@SalesInfoId", request.SalesInfoId, DbType.Int32, ParameterDirection.Input);
+
+                parameter.Add("@MedicineId", request.MedicineId, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@SalesQty", request.SalesQty, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@RefundQty", request.RefundQty, DbType.Int32, ParameterDirection.Input);
+
+                parameter.Add("@CreateBy", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
+                
+                await context.ExecuteAsync(query, parameter);
+                return Result.Success("Success");
             }
         }
     }

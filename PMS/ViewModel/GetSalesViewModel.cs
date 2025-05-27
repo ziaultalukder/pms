@@ -12,4 +12,18 @@
         public decimal GrandTotal { get; set; }
         public string InvoiceNo { get; set; }
     }
+    
+    public class GetSalesByInvoiceNo
+    {
+        public int Id { get; set; }
+        public string CustomerName { get; set; }
+        public string ContactNo { get; set; }
+        public decimal TotalTaka { get; set; }
+        public int DiscountPercentage { get; set; }
+        public decimal DiscountTaka { get; set; }
+        public decimal SubTotal { get; set; }
+        public decimal GrandTotal { get; set; }
+        public string InvoiceNo { get; set; }
+        public IEnumerable<SalesDetailsViewModel> SalesDetailsViewModels { get; set; }
+    }
 }
