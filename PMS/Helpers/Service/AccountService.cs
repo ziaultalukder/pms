@@ -19,7 +19,7 @@ namespace PMS.Helpers.Service
         private readonly DapperContext _dapperContext;
         private readonly IConfiguration _configuration;
         private readonly ICurrentUserService _currentUserService;
-        string Id = "";
+
         public AccountService(DapperContext dapperContext, IConfiguration configuration, ICurrentUserService currentUserService)
         {
             _dapperContext = dapperContext;
@@ -52,9 +52,9 @@ namespace PMS.Helpers.Service
                 parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Emaill", request.Email, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Mobile", request.Mobile, DbType.String, ParameterDirection.Input);
-                parameter.Add("@ClientId", request.ClientId == 0 ? null : _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@ClientId",_currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
-
+                parameter.Add("@IsClientUser", _currentUserService.ClientId == 0 ? null : "Y", DbType.String, ParameterDirection.Input);
                 parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Status", request.Status, DbType.String, ParameterDirection.Input);
                 parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
@@ -80,7 +80,6 @@ namespace PMS.Helpers.Service
                 return res;
             }
         }
-
         public async Task<Result> ChangePassword(ChangePassword request)
         {
             try
@@ -127,7 +126,7 @@ namespace PMS.Helpers.Service
                     parameter.Add("@id", 0, DbType.Int32, ParameterDirection.Input);
                     parameter.Add("@Code", tokenCode, DbType.String, ParameterDirection.Input);
                     parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
-                    parameter.Add("@CreateBy", Id, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
                     parameter.Add("@MESSAGE", "", DbType.String, ParameterDirection.Output);
                     var response = await context.ExecuteAsync(query, parameter);
 
