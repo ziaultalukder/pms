@@ -51,17 +51,16 @@ namespace PMS.Helpers.Service
                 DynamicParameters parameter = new DynamicParameters();
                 parameter.Add("@InvoiceNo", request.InvoiceNo, DbType.String, ParameterDirection.Input);
                 var result = await context.QueryFirstOrDefaultAsync<GetSalesByInvoiceNo>(query, parameter);
-                
-                string query1 = "GetSalesDetailsBySalesInfoId";
-                DynamicParameters parameter1 = new DynamicParameters();
-                parameter1.Add("@SalesInfoId", 1017, DbType.String, ParameterDirection.Input);
-                var result1 = await context.QueryAsync<SalesDetailsViewModel>(query1, parameter1);
-
                 GetSalesByInvoiceNo getSalesByInvoiceNo = result;
-                getSalesByInvoiceNo.SalesDetailsViewModels = result1;
-
+                if (result != null)
+                {
+                    string query1 = "GetSalesDetailsBySalesInfoId";
+                    DynamicParameters parameter1 = new DynamicParameters();
+                    parameter1.Add("@SalesInfoId", result.Id, DbType.String, ParameterDirection.Input);
+                    var result1 = await context.QueryAsync<SalesDetailsViewModel>(query1, parameter1);
+                    getSalesByInvoiceNo.SalesDetailsViewModels = result1;
+                }
                 return getSalesByInvoiceNo;
-                
             }
         }
 
