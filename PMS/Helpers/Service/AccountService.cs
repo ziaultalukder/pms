@@ -52,9 +52,10 @@ namespace PMS.Helpers.Service
                 parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Emaill", request.Email, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Mobile", request.Mobile, DbType.String, ParameterDirection.Input);
-                parameter.Add("@ClientId",_currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
-                parameter.Add("@IsClientUser", _currentUserService.ClientId == 0 ? null : "Y", DbType.String, ParameterDirection.Input);
+                parameter.Add("@IsClientUser", "Y", DbType.String, ParameterDirection.Input);
+                /*parameter.Add("@IsClientUser", _currentUserService.ClientId == 0 ? null : "Y", DbType.String, ParameterDirection.Input);*/
                 parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Status", request.Status, DbType.String, ParameterDirection.Input);
                 parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
@@ -77,6 +78,12 @@ namespace PMS.Helpers.Service
             {
                 string query = "SELECT [Id] ,[Name] ,[ShopName] ,[Address] ,[ContactNo] ,[Email] ,[CreateDate] FROM [dbo].[Client] WHERE Id = " + _currentUserService.ClientId;
                 var res = await context.QueryFirstOrDefaultAsync<ProfileViewModel>(query);
+
+                var sql = "select Id, Name, Email, Mobile, IsActive from Users where ClientId =" + _currentUserService.ClientId + " and IsClientUser = 'Y'";
+                var userlist = context.Query<ClientUserViewModel>(sql).ToList();
+
+                res.ClientUsers = userlist;
+
                 return res;
             }
         }
@@ -166,16 +173,16 @@ namespace PMS.Helpers.Service
 
             using (var context = _dapperContext.CreateConnection())
             {
-                var parameter = new {ContactNO = request.ContactNo};
+                var parameter = new { ContactNO = request.ContactNo };
                 string query = "SELECT * FROM Users where Mobile = @ContactNo";
                 var userData = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
 
                 if (userData != null)
                 {
                     /*var hasPass = Helper.HashPassword(request.Password, userData.PasswordKey);*/
-                    
+
                     request.Password = MD5Encryption.GetMD5HashData(request.Password);
-                    
+
                     if (userData.Password == request.Password)
                     {
                         var user = new UsersViewModel
@@ -219,8 +226,8 @@ namespace PMS.Helpers.Service
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddHours(3),
                 signingCredentials: new SigningCredentials
-                ( 
-                    new SymmetricSecurityKey( Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"])),
+                (
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"])),
                     SecurityAlgorithms.HmacSha256Signature)
                 );
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
@@ -245,6 +252,15 @@ namespace PMS.Helpers.Service
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<IEnumerable<ClientUserViewModel>> GetClientUsers(GetClientUsers request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                var sql = "select Id, Name, Email, Mobile, IsActive from Users where ClientId ="+_currentUserService.ClientId+ " and IsClientUser = 'Y'";
+                return context.Query<ClientUserViewModel>(sql).ToList();
+            }
         }
     }
 }

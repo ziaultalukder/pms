@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PMS.Application.Request.Account.Command;
 using PMS.Application.Request.Account.Query;
+using PMS.ViewModel;
 
 namespace PMS.Controllers
 {
@@ -46,5 +47,13 @@ namespace PMS.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        
+        /*[HttpGet("[action]")]
+        public async Task<IActionResult> GetClientUsers()
+        {
+            var result = await _mediator.Send(new GetClientUsers());
+            return Ok(result);
+        }*/
+
     }
 }

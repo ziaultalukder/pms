@@ -9,5 +9,6 @@
         public string ContactNo { get; set; }
         public string Email { get; set; }
         public DateTime CreateDate { get; set; }
+        public IEnumerable<ClientUserViewModel> ClientUsers { get; set; }
     }
 }

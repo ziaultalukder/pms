@@ -13,6 +13,7 @@ namespace PMS.Application.Request.Account
         Task<Result> AddOrEditUser(AddOrEditUser request);
         Task<ProfileViewModel> AdminProfile(GetAdminProfile request);
         Task<Result> ChangePassword(ChangePassword request);
+        Task<IEnumerable<ClientUserViewModel>> GetClientUsers(GetClientUsers request);
         Task<Result> SendToken(SendToken request);
         Task<object> UserLogin(UserLogin request);
     }
