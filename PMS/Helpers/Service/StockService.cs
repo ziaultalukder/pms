@@ -85,7 +85,7 @@ namespace PMS.Helpers.Service
                                 parameterForDetails.Add("@StockInfoId", res, DbType.Int32, ParameterDirection.Input);
                                 parameterForDetails.Add("@MedicineId", item.MedicineId, DbType.String, ParameterDirection.Input);
                                 parameterForDetails.Add("@NewQty", item.NewQty, DbType.Decimal, ParameterDirection.Input);
-                                parameterForDetails.Add("@SalesPrice", item.SalesPrice, DbType.Int32, ParameterDirection.Input);
+                                parameterForDetails.Add("@SalesPrice", item.SalesPrice, DbType.Decimal, ParameterDirection.Input);
                                 parameterForDetails.Add("@PruchasePrice", item.PruchasePrice, DbType.Decimal, ParameterDirection.Input);
                                 parameterForDetails.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
                                 await context.ExecuteAsync(queryDetails, parameterForDetails, transaction: transactionScope);
