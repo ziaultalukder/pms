@@ -1,23 +1,26 @@
 ﻿using MediatR;
 using PMS.Helpers;
+using PMS.ViewModel;
 
 namespace PMS.Application.Request.Sales.Command
 {
     public class SalesRefund : IRequest<Result>
     {
-        public int SalesDetailsId { get; set; }
-        public int SalesInfoId { get; set; }
-        public int MedicineId { get; set; }
-        public int SalesQty { get; set; }
-        public int RefundQty { get; set; }
+        public int Id { get; set; }
+        public decimal TotalTaka { get; set; }
+        public int Discount { get; set; }
+        public decimal DiscountTaka { get; set; }
+        public decimal GrandTotal { get; set; }
+        public IEnumerable<RefundDetailsViewModel> RefundDetails { get; set; }
 
-        public SalesRefund(int salesDetailsId, int salesInfoId, int medicineId, int salesQty, int refundQty)
+        public SalesRefund(int id, decimal totalTaka, int discount, decimal discountTaka, decimal grandTotal, IEnumerable<RefundDetailsViewModel> refundDetails)
         {
-            SalesDetailsId = salesDetailsId;
-            SalesInfoId = salesInfoId;
-            MedicineId = medicineId;
-            SalesQty = salesQty;
-            RefundQty = refundQty;
+            Id= id;
+            TotalTaka= totalTaka;
+            Discount= discount;
+            DiscountTaka= discountTaka;
+            GrandTotal= grandTotal;
+            RefundDetails= refundDetails;
         }
     }
 

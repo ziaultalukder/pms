@@ -3,6 +3,7 @@
     public class SalesDetailsViewModel
     {
         public int Id { get; set; }
+        public int MedicineId { get; set; }
         public string BrandName { get; set; }
         public decimal SalesPrice { get; set; }
         public int Quantity { get; set; }
