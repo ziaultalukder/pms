@@ -138,12 +138,15 @@ namespace PMS.Helpers.Service
 
                                 await context.ExecuteAsync(queryDetails, parameterForDetails, transaction:tran);
                             }
-                            return Result.Success("Medicine Sales Successfully");
                         }
                         else
                         {
+                            tran.Rollback();
                             return Result.Failure(new List<string> { "Medicine Sales Failed " });
                         }
+
+                        tran.Commit();
+                        return Result.Success("Medicine Sales Successfully");
                     }
                 }
 
