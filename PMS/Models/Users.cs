@@ -15,8 +15,8 @@ namespace PMS.Domain.Models
         public string Mobile { get; set; } = string.Empty;
         public int ClientId { get; set; }
         public string Password { get; set; }=string.Empty;
-        public int RoleId { get; set; }
         public string IsActive { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+        public string IsClientUser { get; set; } = string.Empty;
     }
 }

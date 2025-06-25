@@ -174,9 +174,12 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 var parameter = new { ContactNO = request.ContactNo };
-                string query = "SELECT * FROM Users where Mobile = @ContactNo";
+                string query = "SELECT Id, Name, Email, Mobile, ClientId, Password, IsActive, Status, ISNULL(IsClientUser, 'N') IsClientUser FROM Users where Mobile = @ContactNo";
                 var userData = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
-
+                if (userData.IsActive == "N")
+                {
+                    return Result.Failure(new List<string> { "Your Account Is DeActivated!!" });
+                }
                 if (userData != null)
                 {
                     /*var hasPass = Helper.HashPassword(request.Password, userData.PasswordKey);*/
@@ -198,7 +201,8 @@ namespace PMS.Helpers.Service
                         {
                             succeed = true,
                             token = token,
-                            name = userData.Name
+                            name = userData.Name,
+                            IsClientUser = userData.IsClientUser,
                         };
                     }
                     else
