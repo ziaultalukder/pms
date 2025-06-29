@@ -33,6 +33,13 @@ namespace PMS.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActiveAndDeActiveUser(ActiveAndDeActiveUser command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> ForgotPassword(ForgotPassword command)

@@ -257,13 +257,27 @@ namespace PMS.Helpers.Service
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
         public async Task<IEnumerable<ClientUserViewModel>> GetClientUsers(GetClientUsers request)
         {
             using (var context = _dapperContext.CreateConnection())
             {
                 var sql = "select Id, Name, Email, Mobile, IsActive from Users where ClientId ="+_currentUserService.ClientId+ " and IsClientUser = 'Y'";
                 return context.Query<ClientUserViewModel>(sql).ToList();
+            }
+        }
+
+        public async Task<Result> ActiveAndDeActiveUser(ActiveAndDeActiveUser request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "ActiveAndDeActiveUser";
+                DynamicParameters parameter = new DynamicParameters();
+                parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@IsActive", request.IsActive, DbType.String, ParameterDirection.Input);
+                parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
+                parameter.Add("@Message", "", DbType.String, ParameterDirection.Output);
+                var result = await context.ExecuteAsync(query, parameter);
+                return Result.Success(parameter.Get<string>("@Message"));
             }
         }
     }

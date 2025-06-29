@@ -59,6 +59,14 @@ namespace PMS.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<ActionResult> SalesReport(string startDate, string endDate, int currentPage, int itemsPerPage)
+        {
+            var result = await _mediator.Send(new SalesReport(startDate, endDate, currentPage, itemsPerPage));
+            PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
         public async Task<ActionResult> GetSalesInfoForRefund(string invoiceNo)
         {
             var result = await _mediator.Send(new GetSalesInfoForRefund(invoiceNo));

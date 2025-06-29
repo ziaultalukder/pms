@@ -34,6 +34,7 @@ namespace PMS.Helpers.Service
                 DynamicParameters parameter = new DynamicParameters();
                 parameter.Add("@StartDate", request.StartDate, DbType.String, ParameterDirection.Input);
                 parameter.Add("@EndDate", request.EndDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@PageNo", (request.CurrentPage - 1) * request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@ItemPerPage", request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
                 var result = await context.QueryAsync<GetStockViewModel>(query, parameter);

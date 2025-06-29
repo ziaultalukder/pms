@@ -13,5 +13,6 @@ namespace PMS.Application.Request.Sales
         Task<PagedList<GetSalesViewModel>> GetSales(GetSales request);
         Task<Result> MedicineSales(AddNewSales request);
         Task<Result> SalesRefund(SalesRefund request);
+        Task<PagedList<SalesReportViewModel>> SalesReport(SalesReport request);
     }
 }
