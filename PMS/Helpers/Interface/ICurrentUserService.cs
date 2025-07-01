@@ -5,6 +5,7 @@
         int UserId { get; }
         int RoleId { get; }
         string UserName { get; }
+        string ContactNo { get; }
         string EmployeeId { get; }
         public int ClientId { get; }
     }

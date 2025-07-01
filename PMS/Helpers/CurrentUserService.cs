@@ -10,10 +10,12 @@ namespace PMS.Helpers
             UserId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
             ClientId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email));
             UserName = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
+            ContactNo = httpContextAccessor.HttpContext?.User?.FindFirstValue("ContactNo");
         }
         public int UserId { get; }
         public int RoleId { get; }
         public string UserName { get; }
+        public string ContactNo { get; }
         public string EmployeeId { get; }
         public int ClientId { get ; }
     }

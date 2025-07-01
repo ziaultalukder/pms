@@ -93,9 +93,8 @@ namespace PMS.Helpers.Service
             {
                 using (var context = _dapperContext.CreateConnection())
                 {
-                    var parameter = new { Id = request.Id };
-                    string query = "select * from Users where Id = @Id ";
-                    var user = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
+                    string query = "select * from Users where Mobile = '"+ _currentUserService.ContactNo + "' ";
+                    var user = await context.QueryFirstOrDefaultAsync<Users>(query);
                     if (user == null)
                     {
                         return Result.Failure(new List<string> { "Invalid Current User!!!!" });
@@ -104,8 +103,8 @@ namespace PMS.Helpers.Service
                     request.OldPassword = MD5Encryption.GetMD5HashData(request.OldPassword);
                     if (user.Password == request.OldPassword)
                     {
-                        var updateQryParameter = new { Password = MD5Encryption.GetMD5HashData(request.NewPassword), UserId = request.Id };
-                        string updatePasswordQuery = "update Users set Password = @Password where Id = @UserId ";
+                        var updateQryParameter = new { Password = MD5Encryption.GetMD5HashData(request.NewPassword), UserId = user.Id, UpdateBy=user.UpdateBy };
+                        string updatePasswordQuery = "update Users set Password = @Password, UpdateBy=@UpdateBy, UpdateDate=GETDATE() where Id = @UserId";
                         var res = await context.QueryAsync(updatePasswordQuery, updateQryParameter);
 
                         return Result.Success("success");
@@ -194,6 +193,7 @@ namespace PMS.Helpers.Service
                             Email = userData.Email,
                             Name = userData.Name,
                             ClientId = userData.ClientId,
+                            Mobile = userData.Mobile,
                         };
                         var token = GenerateJWTToken(user);
 
@@ -223,6 +223,7 @@ namespace PMS.Helpers.Service
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.ClientId.ToString()),
+                new Claim("ContactNo", user.Mobile),
             };
 
             var jwtToken = new JwtSecurityToken(
@@ -244,6 +245,7 @@ namespace PMS.Helpers.Service
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Email, user.ClientId.ToString()),
+                    new Claim("ContactNo", user.Mobile),
                 };
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
