@@ -11,6 +11,7 @@ namespace PMS.Application.Request.Sales
         Task<IEnumerable<GetClientWiseMedicineForSalesViewModel>> GetClientWiseMedicineForSales(GetClientWiseMedicineForSales request);
         Task<GetSalesByInvoiceNo> GetSaleByInvoice(GetSalesInfoForRefund request);
         Task<PagedList<GetSalesViewModel>> GetSales(GetSales request);
+        Task<GetSalesByIdViewModel> GetSalesDetailsById(GetSalesDetailsById request);
         Task<Result> MedicineSales(AddNewSales request);
         Task<Result> SalesRefund(SalesRefund request);
         Task<PagedList<SalesReportViewModel>> SalesReport(SalesReport request);

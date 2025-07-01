@@ -72,5 +72,12 @@ namespace PMS.Controllers
             var result = await _mediator.Send(new GetSalesInfoForRefund(invoiceNo));
             return Ok(result);
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetSalesDetailsById(int id)
+        {
+            var result = await _mediator.Send(new GetSalesDetailsById(id));
+            return Ok(result);
+        }
     }
 }

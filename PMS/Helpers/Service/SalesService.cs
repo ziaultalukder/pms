@@ -79,6 +79,27 @@ namespace PMS.Helpers.Service
                 return new PagedList<GetSalesViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, result.Count());
             }
         }
+
+        public async Task<GetSalesByIdViewModel> GetSalesDetailsById(GetSalesDetailsById request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                GetSalesByIdViewModel getSalesByIdViewModel = new GetSalesByIdViewModel();
+                
+                var parameters = new { Id = request.Id, ClientId = _currentUserService.ClientId};
+                var sql = "select Id,TotalTaka,DiscountPercentage,DiscountTaka,GrandTotal,InvoiceNo,IsRefundable,CreateDate from SalesInfo where Id = @Id AND ClientId = @ClientId";
+
+                var SalesInfo = context.QueryFirstOrDefault<GetSalesByIdViewModel>(sql, parameters);
+
+                var SalesDetailsQry = "select Id,SalesInfoId,SalesPrice,Quantity,RefundQty,GrandTotal, BrandName, ManufacturerName from SalesDetails inner join MedicineList on MedicineId = SL where SalesInfoId = @Id AND ClientId = @ClientId";
+
+                var SalesDetails = context.Query<GetSalesDetailsByIdViewModel>(SalesDetailsQry, parameters);
+                SalesInfo.SalesDetails = SalesDetails.ToList();
+
+                return SalesInfo;
+            }
+        }
+
         public async Task<Result> MedicineSales(AddNewSales request)
         {
             try
