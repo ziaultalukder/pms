@@ -30,7 +30,7 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 string conditionClause = " ";
-                string query = "select * from GetClientWiseMedicineForSales_VW WHERE ClientId =" + _currentUserService.ClientId;
+                string query = "select * from GetClientWiseMedicineForSales_VW WHERE Quantity > 0 and ClientId =" + _currentUserService.ClientId;
 
                 if (!string.IsNullOrEmpty(request.MedicineName))
                 {
