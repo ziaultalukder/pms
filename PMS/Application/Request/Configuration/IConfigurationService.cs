@@ -19,5 +19,9 @@ namespace PMS.Application.Request.Configuration
         Task<Result> AddClient(AddClient request);
         Task<IEnumerable<PopularMedicineViewModel>> PopularMedicine();
         Task<IEnumerable<Division>> GetDivision();
+        Task<Result> AddMedicine(AddMedicine request);
+        Task<Result> UpdateMedicine(UpdateMedicine request);
+        Task<PagedList<GetUserUploadItemViewModel>> GetUserUploadItem(GetUserUploadItem request);
+        Task<Result> AddSupplier(AddSupplier request);
     }
 }

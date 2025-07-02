@@ -108,6 +108,21 @@ namespace PMS.Controllers
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
         }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddOrEditSupplier(AddSupplier command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetUserUploadItem(int id, string itemName, string getAll, int currentPage, int itemsPerPage)
+        {
+            var result = await _mediator.Send(new GetUserUploadItem(id, itemName, getAll, currentPage, itemsPerPage));
+            PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
+            return Ok(result);
+        }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> GetProfile()
@@ -118,7 +133,6 @@ namespace PMS.Controllers
 
 
         [HttpPost("[action]")]
-        [AllowAnonymous]
         public async Task<IActionResult> AddClient(AddClient command)
         {
             var result = await _mediator.Send(command);
@@ -127,6 +141,20 @@ namespace PMS.Controllers
         
         [HttpPost("[action]")]
         public async Task<IActionResult> UpdateClient(UpdateClient command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddMedicine(AddMedicine command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateMedicine(UpdateMedicine command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

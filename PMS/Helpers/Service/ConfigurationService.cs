@@ -119,28 +119,23 @@ namespace PMS.Helpers.Service
 
                 if (!string.IsNullOrEmpty(request.Name))
                 {
-                    query += Helper.GetSqlCondition(conditionClause, "AND") + " Name = '" + request.Name.Trim() + "' ";
+                    query += Helper.GetSqlCondition(conditionClause, "AND") + " Name Like '%" + request.Name.Trim() + "%' ";
                     conditionClause = " WHERE ";
                 }
 
                 if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
                 {
                     //query += " order by id desc ";
-                    request.ItemsPerPage = 0;
+                    /*request.ItemsPerPage = 0;*/
+                    query += " Where ClientId="+_currentUserService.ClientId+" order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 else
                 {
-                    query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " and ClientId="+_currentUserService.ClientId+" order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
 
                 var supplierList = await context.QueryAsync<Supplier>(query);
-                string totalItemQuery = "SELECT  top 1 TotalItems FROM ( " + query + ")  AS result  ORDER BY TotalItems";
-                int totalItem = context.QueryFirstOrDefault<int>(totalItemQuery);
-                if (request.ItemsPerPage == 0)
-                {
-                    request.ItemsPerPage = totalItem;
-                }
-                return new PagedList<Supplier>(supplierList.ToList(), request.CurrentPage, request.ItemsPerPage, totalItem);
+                return new PagedList<Supplier>(supplierList.ToList(), request.CurrentPage, request.ItemsPerPage, supplierList.Count());
             }
         }
         public async Task<IEnumerable<MedicineListByNameViewModel>> MedicineListByName(MedicineListByName request)
@@ -308,6 +303,137 @@ namespace PMS.Helpers.Service
                 string query = "SELECT * FROM Division";
                 var result = await context.QueryAsync<Division>(query);
                 return result.ToList();
+            }
+        }
+        public async Task<Result> AddMedicine(AddMedicine request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.Manufacturer))
+                {
+                    return Result.Failure(new List<string> { "Manufacture is required" });
+                }
+                if (string.IsNullOrEmpty(request.BrandName))
+                {
+                    return Result.Failure(new List<string> { "BrandName is required" });
+                }
+                
+                using (var context = _dapperContext.CreateConnection())
+                {
+                    string query = "InsertMedicine";
+                    DynamicParameters parameter = new DynamicParameters();
+
+                    parameter.Add("@Manufacturer", request.Manufacturer, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@BrandName", request.BrandName, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@Strength", null, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@IsUserItem", "Y", DbType.String, ParameterDirection.Input);
+                    parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@CreateBy", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@Message", "", DbType.Int32, ParameterDirection.Output);
+
+                    var result = await context.ExecuteAsync(query, parameter);
+                    int res = parameter.Get<int>("@Message");
+                    if (res > 0)
+                        return Result.Success("Save Success");
+                    else
+                        return Result.Failure(new List<string> { "Save Failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(new List<string> { ex.Message });
+            }
+        }
+        public async Task<Result> UpdateMedicine(UpdateMedicine request)
+        {
+            try
+            {
+                if (request.Id == 0)
+                {
+                    return Result.Failure(new List<string> { "Something Wrong Try Again" });
+                }
+
+                using (var context = _dapperContext.CreateConnection())
+                {
+                    string query = "UpdateMedicine";
+                    DynamicParameters parameter = new DynamicParameters();
+
+                    parameter.Add("@Id", request.Id, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@ManufacturerName", request.Manufacturer, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@BrandName", request.BrandName, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@Message", "", DbType.Int32, ParameterDirection.Output);
+
+                    var result = await context.ExecuteAsync(query, parameter);
+                    int res = parameter.Get<int>("@Message");
+                    if (res > 0)
+                        return Result.Success("Update Success");
+                    else
+                        return Result.Failure(new List<string> { "Update Failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(new List<string> { ex.Message });
+            }
+        }
+        public async Task<PagedList<GetUserUploadItemViewModel>> GetUserUploadItem(GetUserUploadItem request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string ds = ClientId;
+
+                string conditionClause = " ";
+                string query = "SELECT SL, ManufacturerName, BrandName, DosageDescription, COUNT(*) OVER() as TotalItems FROM MedicineList";
+
+                if (request.Id > 0)
+                {
+                    query += Helper.GetSqlCondition(conditionClause, "AND") + " SL = " + request.Id;
+                    conditionClause = " WHERE ";
+                }
+
+                if (!string.IsNullOrEmpty(request.Name))
+                {
+                    query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '%" + request.Name.Trim() + "%' ";
+                    conditionClause = " WHERE ";
+                }
+
+                if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
+                {
+                    query += " Where ClientId=" + _currentUserService.ClientId+ " and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) +" ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    /*request.ItemsPerPage = 0;*/
+                }
+                else
+                {
+                    query += " AND ClientId=" + _currentUserService.ClientId+" and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                }
+
+                var itemList = await context.QueryAsync<GetUserUploadItemViewModel>(query);
+                return new PagedList<GetUserUploadItemViewModel>(itemList.ToList(), request.CurrentPage, request.ItemsPerPage, itemList.Count());
+            }
+        }
+        public async Task<Result> AddSupplier(AddSupplier request)
+        {
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                return Result.Failure(new List<string> { "Name is required" });
+            }
+
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "InsertOrUpdateSupplier";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.String, ParameterDirection.Input);
+                parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
+                parameter.Add("@Message", "", DbType.Int32, ParameterDirection.Output);
+
+                var result = await context.ExecuteAsync(query, parameter);
+                int res = parameter.Get<int>("@Message");
+
+                return Result.Success("Save Success");
             }
         }
     }
