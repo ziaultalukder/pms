@@ -155,6 +155,23 @@ namespace PMS.Helpers.Service
                 }
             }
         }
+        public async Task<IEnumerable<SupplierByNameViewModel>> SupplierByName(SupplierByName request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                if(request.Name is not null)
+                {
+                    string qry = "select Id, Name from Supplier Where Name like '%"+request.Name+"%'";
+                    
+                    var medicineNameList = await context.QueryAsync<SupplierByNameViewModel>(qry);
+                    return medicineNameList.ToList();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         public async Task<PagedList<ClientWiseMedicineViewModel>> ClientWiseMedicine(GetClientWiseMedicine request)
         {
             using (var context = _dapperContext.CreateConnection())
@@ -323,6 +340,7 @@ namespace PMS.Helpers.Service
                     string query = "InsertMedicine";
                     DynamicParameters parameter = new DynamicParameters();
 
+                    parameter.Add("@ManufactureId", request.ManufactureId, DbType.Int32, ParameterDirection.Input);
                     parameter.Add("@Manufacturer", request.Manufacturer, DbType.String, ParameterDirection.Input);
                     parameter.Add("@BrandName", request.BrandName, DbType.String, ParameterDirection.Input);
                     parameter.Add("@Strength", null, DbType.String, ParameterDirection.Input);
@@ -359,6 +377,7 @@ namespace PMS.Helpers.Service
                     DynamicParameters parameter = new DynamicParameters();
 
                     parameter.Add("@Id", request.Id, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@ManufactureId", request.ManufactureId, DbType.Int32, ParameterDirection.Input);
                     parameter.Add("@ManufacturerName", request.Manufacturer, DbType.String, ParameterDirection.Input);
                     parameter.Add("@BrandName", request.BrandName, DbType.String, ParameterDirection.Input);
                     parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
@@ -384,7 +403,7 @@ namespace PMS.Helpers.Service
                 string ds = ClientId;
 
                 string conditionClause = " ";
-                string query = "SELECT SL, ManufacturerName, BrandName, DosageDescription, COUNT(*) OVER() as TotalItems FROM MedicineList";
+                string query = "SELECT SL, ManufactureId, ManufacturerName, BrandName,IsUserItem FROM MedicineList";
 
                 if (request.Id > 0)
                 {

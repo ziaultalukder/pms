@@ -91,7 +91,7 @@ namespace PMS.Helpers.Service
 
                 var SalesInfo = context.QueryFirstOrDefault<GetSalesByIdViewModel>(sql, parameters);
 
-                var SalesDetailsQry = "select Id,SalesInfoId,SalesPrice,Quantity,RefundQty,GrandTotal, BrandName, ManufacturerName from SalesDetails inner join MedicineList on MedicineId = SL where SalesInfoId = @Id AND ClientId = @ClientId";
+                var SalesDetailsQry = "select Id,SalesInfoId,SalesPrice,Quantity,RefundQty,GrandTotal, BrandName, ManufacturerName from SalesDetails inner join MedicineList on MedicineId = SL where SalesInfoId = @Id";
 
                 var SalesDetails = context.Query<GetSalesDetailsByIdViewModel>(SalesDetailsQry, parameters);
                 SalesInfo.SalesDetails = SalesDetails.ToList();

@@ -23,5 +23,6 @@ namespace PMS.Application.Request.Configuration
         Task<Result> UpdateMedicine(UpdateMedicine request);
         Task<PagedList<GetUserUploadItemViewModel>> GetUserUploadItem(GetUserUploadItem request);
         Task<Result> AddSupplier(AddSupplier request);
+        Task<IEnumerable<SupplierByNameViewModel>> SupplierByName(SupplierByName request);
     }
 }

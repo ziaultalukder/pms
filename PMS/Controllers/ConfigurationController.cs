@@ -71,6 +71,13 @@ namespace PMS.Controllers
         }
         
         [HttpGet("[action]")]
+        public async Task<IActionResult> SupplierByName(string name)
+        {
+            var result = await _mediator.Send(new SupplierByName(name));
+            return Ok(result); 
+        }
+        
+        [HttpGet("[action]")]
         [AllowAnonymous]
         public async Task<IActionResult> MedicineListByNameForWeb(string name)
         {

@@ -7,13 +7,16 @@ namespace PMS.Application.Request.Configuration.Command
 {
     public class AddMedicine : IRequest<Result>
     {
+        public int ManufactureId { get; set; }
         public string Manufacturer { get; set; }
         public string BrandName { get; set; }
 
-        public AddMedicine(string manufacturer, string brandName)
+        public AddMedicine(string manufacturer, string brandName, int manufactureId)
         {
             Manufacturer = manufacturer;
             BrandName = brandName;
+            ManufactureId = manufactureId;
+
         }
     }
 
