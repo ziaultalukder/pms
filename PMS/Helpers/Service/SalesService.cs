@@ -50,6 +50,7 @@ namespace PMS.Helpers.Service
                 string query = "GetSalesInfoByInvoiceNo";
                 DynamicParameters parameter = new DynamicParameters();
                 parameter.Add("@InvoiceNo", request.InvoiceNo, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 var result = await context.QueryFirstOrDefaultAsync<GetSalesByInvoiceNo>(query, parameter);
                 GetSalesByInvoiceNo getSalesByInvoiceNo = result;
                 if (result != null)

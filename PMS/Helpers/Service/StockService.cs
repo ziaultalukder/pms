@@ -26,7 +26,7 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 var parameters = new { InvoiceNo = request.InvoiceNo };
-                string query = "select * from stock_info where Invoice =@InvoiceNo ";
+                string query = "select * from stock_info where Invoice =@InvoiceNo and ClientId="+_currentUserService.ClientId;
                 var result = await context.QueryFirstOrDefaultAsync<GetStockByInvoiceNo>(query, parameters);
 
                 if (result != null)

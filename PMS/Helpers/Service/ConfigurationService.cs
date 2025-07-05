@@ -109,7 +109,7 @@ namespace PMS.Helpers.Service
                 string ds = ClientId;
 
                 string conditionClause = " ";
-                string query = "SELECT Supplier.* , count(*) over() as TotalItems from Supplier ";
+                string query = "SELECT * from Supplier ";
 
                 if (request.Id > 0)
                 {
@@ -127,11 +127,13 @@ namespace PMS.Helpers.Service
                 {
                     //query += " order by id desc ";
                     /*request.ItemsPerPage = 0;*/
-                    query += " Where ClientId="+_currentUserService.ClientId+" order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    //Where ClientId="+_currentUserService.ClientId+" 
+                    query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 else
                 {
-                    query += " and ClientId="+_currentUserService.ClientId+" order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    /*and ClientId="+_currentUserService.ClientId+"*/
+                    query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
 
                 var supplierList = await context.QueryAsync<Supplier>(query);
@@ -408,18 +410,21 @@ namespace PMS.Helpers.Service
 
                 if (!string.IsNullOrEmpty(request.Name))
                 {
+
                     query += Helper.GetSqlCondition(conditionClause, "AND") + " BrandName Like '%" + request.Name.Trim() + "%' ";
                     conditionClause = " WHERE ";
                 }
 
                 if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
                 {
-                    query += " Where ClientId=" + _currentUserService.ClientId+ " and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) +" ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    //ClientId=" + _currentUserService.ClientId+ " and 
+                    query += " Where IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) +" ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                     /*request.ItemsPerPage = 0;*/
                 }
                 else
                 {
-                    query += " AND ClientId=" + _currentUserService.ClientId+" and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    //AND ClientId=" + _currentUserService.ClientId+"
+                    query += " and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
 
                 var itemList = await context.QueryAsync<GetUserUploadItemViewModel>(query);
