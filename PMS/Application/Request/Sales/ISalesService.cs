@@ -1,6 +1,7 @@
 ﻿using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Sales.Command;
 using PMS.Application.Request.Sales.Query;
+using PMS.Application.Request.Stock.Query;
 using PMS.Helpers;
 using PMS.ViewModel;
 

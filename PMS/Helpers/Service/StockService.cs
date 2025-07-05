@@ -1,15 +1,12 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Stock;
 using PMS.Application.Request.Stock.Command;
 using PMS.Application.Request.Stock.Query;
 using PMS.Context;
 using PMS.Helpers.Interface;
-using PMS.Models;
 using PMS.ViewModel;
 using System.Data;
-using System.Security.Claims;
 
 namespace PMS.Helpers.Service
 {
@@ -17,7 +14,6 @@ namespace PMS.Helpers.Service
     {
         private readonly DapperContext _dapperContext;
         private readonly ICurrentUserService _currentUserService;
-        //string Id = "";
         public StockService(DapperContext dapperContext, ICurrentUserService currentUserService)
         {
             _dapperContext = dapperContext;
@@ -25,7 +21,23 @@ namespace PMS.Helpers.Service
 
             //Id = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+        public async Task<GetStockByInvoiceNo> GetStockByInvoiceNo(GetStockInfoForRefund request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                var parameters = new { InvoiceNo = request.InvoiceNo };
+                string query = "select * from stock_info where Invoice =@InvoiceNo ";
+                var result = await context.QueryFirstOrDefaultAsync<GetStockByInvoiceNo>(query, parameters);
 
+                if (result != null)
+                {
+                    string query1 = "select Id,MedicineId,BrandName,NewQty,SalesPrice, PruchasePrice from stock_in_details Innser join MedicineList on MedicineId = SL where StockInfoId =" + result.Id;
+                    var result1 = await context.QueryAsync<GetStockDetailsViewModel>(query1);
+                    result.StockDetailsViewModels= result1;
+                }
+                return result;
+            }
+        }
         public async Task<PagedList<GetStockViewModel>> GetStocks(GetStock request)
         {
             using (var context = _dapperContext.CreateConnection())
@@ -41,7 +53,6 @@ namespace PMS.Helpers.Service
                 return new PagedList<GetStockViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, result.Count());
             }
         }
-
         public async Task<Result> MedicineStock(AddNewStock request)
         {
             if (request.StockInDetails.Count == 0)
@@ -65,11 +76,12 @@ namespace PMS.Helpers.Service
                         parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                         parameter.Add("@StockDate", request.StockDate, DbType.DateTime, ParameterDirection.Input);
                         parameter.Add("@SupplierId", request.SupplierId, DbType.Int32, ParameterDirection.Input);
-                        parameter.Add("@TotalPrice", request.TotalPrice, DbType.Int32, ParameterDirection.Input);
+                        parameter.Add("@TotalPrice", request.TotalPrice, DbType.Decimal, ParameterDirection.Input);
                         parameter.Add("@DiscountPercentage", request.DiscountPercentage, DbType.Int32, ParameterDirection.Input);
                         parameter.Add("@DiscountTaka", request.DiscountTaka, DbType.Decimal, ParameterDirection.Input);
                         parameter.Add("@DiscountValue", request.DiscountValue, DbType.Decimal, ParameterDirection.Input);
                         parameter.Add("@isActive", request.IsActive, DbType.String, ParameterDirection.Input);
+                        parameter.Add("@GrandTotal", request.GrandTotal, DbType.Decimal, ParameterDirection.Input);
                         parameter.Add("@CreateBy", _currentUserService.UserId.ToString(), DbType.String, ParameterDirection.Input);
                         parameter.Add("@P_MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
                         var result = await context.ExecuteAsync(query, parameter, transaction: transactionScope);
@@ -106,6 +118,45 @@ namespace PMS.Helpers.Service
                         transactionScope.Rollback();
                         return Result.Failure(new List<string> { ex.Message });
                     }
+                }
+            }
+        }
+        public async Task<Result> StockRefund(StockRefund request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                context.Open();
+                using (var transaction = context.BeginTransaction())
+                {
+                    string query = "InsertStockRefund";
+                    DynamicParameters parameter = new DynamicParameters();
+                    parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+
+                    parameter.Add("@TotalTaka", request.TotalTaka, DbType.Decimal, ParameterDirection.Input);
+                    parameter.Add("@Discount", request.Discount, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@DiscountTaka", request.DiscountTaka, DbType.Decimal, ParameterDirection.Input);
+                    parameter.Add("@GrandTotal", request.GrandTotal, DbType.Decimal, ParameterDirection.Input);
+                    parameter.Add("@CreateBy", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
+
+                    await context.ExecuteAsync(query, parameter, transaction: transaction);
+
+                    foreach (var item in request.RefundDetails)
+                    {
+                        string queryForDetails = "InsertStockRefundDetails";
+                        DynamicParameters parameterForDetails = new DynamicParameters();
+                        parameterForDetails.Add("@Id", item.Id, DbType.Int32, ParameterDirection.Input);
+                        parameterForDetails.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                        parameterForDetails.Add("@MedicineId", item.MedicineId, DbType.Int32, ParameterDirection.Input);
+                        parameterForDetails.Add("@RefundQty", item.RefundQty, DbType.Int32, ParameterDirection.Input);
+                        parameterForDetails.Add("@ExistingQty", item.ExistingQty, DbType.Int32, ParameterDirection.Input);
+                        parameterForDetails.Add("@CreateBy", _currentUserService.UserId, DbType.Int32, ParameterDirection.Input);
+                        parameterForDetails.Add("@MESSAGE", 0, DbType.Int32, ParameterDirection.Output);
+
+                        await context.ExecuteAsync(queryForDetails, parameterForDetails, transaction: transaction);
+                    }
+                    transaction.Commit();
+                    return Result.Success("Success");
                 }
             }
         }

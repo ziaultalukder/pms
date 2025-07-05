@@ -8,7 +8,9 @@ namespace PMS.Application.Request.Stock
 {
     public interface IStockService
     {
+        Task<GetStockByInvoiceNo> GetStockByInvoiceNo(GetStockInfoForRefund request);
         Task<PagedList<GetStockViewModel>> GetStocks(GetStock request);
         Task<Result> MedicineStock(AddNewStock request);
+        Task<Result> StockRefund(StockRefund request);
     }
 }

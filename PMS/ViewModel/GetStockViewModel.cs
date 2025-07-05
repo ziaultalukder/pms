@@ -8,6 +8,7 @@
         public int DiscountPercentage { get; set;}
         public decimal DiscountTaka { get; set; }
         public decimal DiscountValue { get; set;}
+        public DateTime CreateDate { get; set;}
         public decimal GrandTotal { get; set;}
     }
 }

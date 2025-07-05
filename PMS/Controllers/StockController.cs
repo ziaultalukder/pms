@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PMS.Application.Common.Pagins;
 using PMS.Application.Request.Account.Command;
+using PMS.Application.Request.Sales.Command;
 using PMS.Application.Request.Sales.Query;
 using PMS.Application.Request.Stock.Command;
 using PMS.Application.Request.Stock.Query;
@@ -35,6 +36,28 @@ namespace PMS.Controllers
             var result = await _mediator.Send(new GetStock(startDate, endDate, currentPage, itemsPerPage));
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetStockInfoForRefund(string invoiceNo)
+        {
+            var result = await _mediator.Send(new GetStockInfoForRefund(invoiceNo));
+            return Ok(result);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> StockRefund(StockRefund command)
+        {
+            var result = await _mediator.Send(command);
+            if (result.Succeed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(StatusCodes.Status400BadRequest);
+            }
+
         }
     }
 }

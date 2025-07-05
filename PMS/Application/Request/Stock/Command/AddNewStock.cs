@@ -16,8 +16,9 @@ namespace PMS.Application.Request.Stock.Command
         public decimal DiscountTaka { get; set; }
         public decimal DiscountValue { get; set; }
         public string IsActive { get; set; }
+        public decimal GrandTotal { get; set; }
         public List<StockInDetails> StockInDetails { get; set; }
-        public AddNewStock(int id, DateTime stockDate, int supplierId, decimal totalPrice, decimal discountPercentage, decimal discountTaka, decimal discountValue, string isActive, List<StockInDetails> stockInDetails)
+        public AddNewStock(int id, DateTime stockDate, int supplierId, decimal totalPrice, decimal discountPercentage, decimal discountTaka, decimal discountValue, string isActive, decimal grandTotal, List<StockInDetails> stockInDetails)
         {
             Id = id; 
             StockDate = stockDate; 
@@ -27,6 +28,7 @@ namespace PMS.Application.Request.Stock.Command
             DiscountTaka = discountTaka;
             DiscountValue = discountValue;
             IsActive = isActive;
+            GrandTotal = grandTotal;
             StockInDetails = stockInDetails;
         }
     }
