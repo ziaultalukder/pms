@@ -10,6 +10,7 @@ namespace PMS.Application.Request.Configuration.Query
         public int Id { get; set; }
         public string Name { get; set; }
         public string GetAll { get; set; }
+        
         public GetUserUploadItem(int id, string name, string getAll, int currentPage, int itemsPerpage) : base(currentPage, itemsPerpage)
         {
             Id = id;

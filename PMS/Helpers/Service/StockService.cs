@@ -21,6 +21,26 @@ namespace PMS.Helpers.Service
 
             //Id = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+
+        public async Task<StockInforIdViewModel> GetStockById(GetStockById request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+
+                var parameters = new { Id = request.Id, ClientId = _currentUserService.ClientId };
+                var sql = "select Id, CreateDate, Invoice, TotalPrice, DiscountPercentage, DiscountValue, GrandTotal, IsRefundable from stock_info where Id = @Id and ClientId = @ClientId";
+
+                var stockInfo = await context.QueryFirstOrDefaultAsync<StockInforIdViewModel>(sql, parameters);
+
+                var SalesDetailsQry = "select Id, StockInfoId, MedicineId, ManufacturerName, BrandName, NewQty, RefundQty, SalesPrice, PruchasePrice from stock_in_details inner join MedicineList on MedicineId = SL where StockInfoId = @Id";
+
+                var stockDetails = await context.QueryAsync<StockInDetailsforIdViewModel>(SalesDetailsQry, parameters);
+                stockInfo.StockInDetails = stockDetails.ToList();
+
+                return stockInfo;
+            }
+        }
+
         public async Task<GetStockByInvoiceNo> GetStockByInvoiceNo(GetStockInfoForRefund request)
         {
             using (var context = _dapperContext.CreateConnection())

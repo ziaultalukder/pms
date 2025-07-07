@@ -11,11 +11,13 @@ namespace PMS.Application.Request.Configuration.Query
         public int Id { get; set; }
         public string Name { get; set; }
         public string GetAll { get; set; }
-        public GetSupplier(int id, string name, string getAll,int currentPage, int itemsPerpage) : base(currentPage, itemsPerpage)
+        public string IsItemEdit { get; set; }
+        public GetSupplier(int id, string name, string getAll, string isItemEdit, int currentPage, int itemsPerpage) : base(currentPage, itemsPerpage)
         {
             Id = id;
             Name = name;
             GetAll = getAll;
+            IsItemEdit = isItemEdit;
         }
     }
 

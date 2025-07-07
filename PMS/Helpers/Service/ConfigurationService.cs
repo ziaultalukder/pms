@@ -125,10 +125,17 @@ namespace PMS.Helpers.Service
 
                 if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
                 {
-                    //query += " order by id desc ";
-                    /*request.ItemsPerPage = 0;*/
-                    //Where ClientId="+_currentUserService.ClientId+" 
-                    query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
+                    {
+                        if (!string.IsNullOrEmpty(request.IsItemEdit) && request.IsItemEdit.ToUpper() == "Y")
+                        {
+                            request.ItemsPerPage = 0;
+                        }
+                        else
+                        {
+                            query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                        }
+                    }
                 }
                 else
                 {
@@ -417,13 +424,10 @@ namespace PMS.Helpers.Service
 
                 if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
                 {
-                    //ClientId=" + _currentUserService.ClientId+ " and 
-                    query += " Where IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) +" ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
-                    /*request.ItemsPerPage = 0;*/
+                    query += " Where IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 else
                 {
-                    //AND ClientId=" + _currentUserService.ClientId+"
                     query += " and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
 

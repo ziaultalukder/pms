@@ -37,6 +37,13 @@ namespace PMS.Controllers
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
         }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetStockById(int id)
+        {
+            var result = await _mediator.Send(new GetStockById(id));
+            return Ok(result);
+        }
 
         [HttpGet("[action]")]
         public async Task<ActionResult> GetStockInfoForRefund(string invoiceNo)

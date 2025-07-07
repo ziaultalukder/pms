@@ -109,9 +109,9 @@ namespace PMS.Controllers
         }
         
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetSupplier(int id, string shopName, string getAll, int currentPage, int itemsPerPage)
+        public async Task<IActionResult> GetSupplier(int id, string shopName, string getAll, string isItemEdit, int currentPage, int itemsPerPage)
         {
-            var result = await _mediator.Send(new GetSupplier(id, shopName, getAll, currentPage, itemsPerPage));
+            var result = await _mediator.Send(new GetSupplier(id, shopName, getAll, isItemEdit, currentPage, itemsPerPage));
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
         }
