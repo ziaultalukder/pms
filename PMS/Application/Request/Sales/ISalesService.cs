@@ -16,5 +16,8 @@ namespace PMS.Application.Request.Sales
         Task<Result> MedicineSales(AddNewSales request);
         Task<Result> SalesRefund(SalesRefund request);
         Task<PagedList<SalesReportViewModel>> SalesReport(SalesReport request);
+        Task<TodayMonthlyAndYearlySalesReportViewModel> TodayMonthlyAndYearlySalesReport(TodayMonthlyAndYearlySalesReport request);
+        Task<IEnumerable<WeeklyChartSalesReportViewModel>> WeeklyChartSalesReport(WeeklyChartSalesReport request);
+        Task<IEnumerable<WeeklyTopSalesMedicineReportViewModel>> WeeklyTopSalesMedicineReport(WeeklyTopSalesMedicineReport request);
     }
 }

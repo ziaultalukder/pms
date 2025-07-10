@@ -250,5 +250,44 @@ namespace PMS.Helpers.Service
                 return new PagedList<SalesReportViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, result.Count());
             }
         }
+
+        public async Task<TodayMonthlyAndYearlySalesReportViewModel> TodayMonthlyAndYearlySalesReport(TodayMonthlyAndYearlySalesReport request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "TodayMonthlyAndYearlySalesReport";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryFirstOrDefaultAsync<TodayMonthlyAndYearlySalesReportViewModel>(query, parameter);
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<WeeklyChartSalesReportViewModel>> WeeklyChartSalesReport(WeeklyChartSalesReport request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "WeeklyChartSalesReport";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryAsync<WeeklyChartSalesReportViewModel>(query, parameter);
+                return result.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<WeeklyTopSalesMedicineReportViewModel>> WeeklyTopSalesMedicineReport(WeeklyTopSalesMedicineReport request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "WeeklyTopSalesMedicineReport";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryAsync<WeeklyTopSalesMedicineReportViewModel>(query, parameter);
+                return result.ToList();
+            }
+        }
     }
 }

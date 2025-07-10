@@ -21,7 +21,6 @@ namespace PMS.Helpers.Service
 
             //Id = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
-
         public async Task<StockInforIdViewModel> GetStockById(GetStockById request)
         {
             using (var context = _dapperContext.CreateConnection())
@@ -40,7 +39,6 @@ namespace PMS.Helpers.Service
                 return stockInfo;
             }
         }
-
         public async Task<GetStockByInvoiceNo> GetStockByInvoiceNo(GetStockInfoForRefund request)
         {
             using (var context = _dapperContext.CreateConnection())

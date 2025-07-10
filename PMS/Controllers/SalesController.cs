@@ -79,5 +79,26 @@ namespace PMS.Controllers
             var result = await _mediator.Send(new GetSalesDetailsById(id));
             return Ok(result);
         }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> TodayMonthlyAndYearlySalesReport()
+        {
+            var result = await _mediator.Send(new TodayMonthlyAndYearlySalesReport());
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> WeeklyChartSalesReport()
+        {
+            var result = await _mediator.Send(new WeeklyChartSalesReport());
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> WeeklyTopSalesMedicineReport()
+        {
+            var result = await _mediator.Send(new WeeklyTopSalesMedicineReport());
+            return Ok(result);
+        }
     }
 }
