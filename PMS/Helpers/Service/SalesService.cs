@@ -26,7 +26,7 @@ namespace PMS.Helpers.Service
         }
 
         public async Task<IEnumerable<GetClientWiseMedicineForSalesViewModel>> GetClientWiseMedicineForSales(GetClientWiseMedicineForSales request)
-        {
+       {
             using (var context = _dapperContext.CreateConnection())
             {
                 string conditionClause = " ";
