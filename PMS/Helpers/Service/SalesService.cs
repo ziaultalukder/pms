@@ -284,6 +284,7 @@ namespace PMS.Helpers.Service
                 string query = "WeeklyTopSalesMedicineReport";
                 DynamicParameters parameter = new DynamicParameters();
 
+                parameter.Add("@Value", request.Value, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 var result = await context.QueryAsync<WeeklyTopSalesMedicineReportViewModel>(query, parameter);
                 return result.ToList();

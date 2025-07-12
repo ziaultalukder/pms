@@ -95,9 +95,9 @@ namespace PMS.Controllers
         }
         
         [HttpGet("[action]")]
-        public async Task<ActionResult> WeeklyTopSalesMedicineReport()
+        public async Task<ActionResult> WeeklyTopSalesMedicineReport(int value)
         {
-            var result = await _mediator.Send(new WeeklyTopSalesMedicineReport());
+            var result = await _mediator.Send(new WeeklyTopSalesMedicineReport(value));
             return Ok(result);
         }
     }
