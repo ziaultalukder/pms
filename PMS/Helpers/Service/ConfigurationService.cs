@@ -133,14 +133,13 @@ namespace PMS.Helpers.Service
                         }
                         else
                         {
-                            query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                            query += " order by id desc OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                         }
                     }
                 }
                 else
                 {
-                    /*and ClientId="+_currentUserService.ClientId+"*/
-                    query += " order by id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " order by id desc OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
 
                 var supplierList = await context.QueryAsync<Supplier>(query);
@@ -424,11 +423,11 @@ namespace PMS.Helpers.Service
 
                 if (!string.IsNullOrEmpty(request.GetAll) && request.GetAll.ToUpper() == "Y")
                 {
-                    query += " Where IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " Where IsUserItem='Y' order by SL desc OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 else
                 {
-                    query += " and IsUserItem='Y' order by SL OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " and IsUserItem='Y' order by SL desc OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
 
                 var itemList = await context.QueryAsync<GetUserUploadItemViewModel>(query);
