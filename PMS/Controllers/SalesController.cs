@@ -65,6 +65,13 @@ namespace PMS.Controllers
             PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result);
         }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> QuantityWiseSalesReport(string startDate, string endDate)
+        {
+            var result = await _mediator.Send(new QuantityWiseSalesReport(startDate, endDate));
+            return Ok(result);
+        }
 
         [HttpGet("[action]")]
         public async Task<ActionResult> GetSalesInfoForRefund(string invoiceNo)
@@ -100,5 +107,7 @@ namespace PMS.Controllers
             var result = await _mediator.Send(new WeeklyTopSalesMedicineReport(value));
             return Ok(result);
         }
+
+
     }
 }

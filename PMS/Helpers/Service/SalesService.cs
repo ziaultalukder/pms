@@ -4,11 +4,9 @@ using PMS.Application.Request.Sales;
 using PMS.Application.Request.Sales.Command;
 using PMS.Application.Request.Sales.Query;
 using PMS.Context;
-using PMS.Domain.Models;
 using PMS.Helpers.Interface;
 using PMS.ViewModel;
 using System.Data;
-using System.Security.Claims;
 
 namespace PMS.Helpers.Service
 {
@@ -176,6 +174,21 @@ namespace PMS.Helpers.Service
             catch (Exception ex)
             {
                 return Result.Failure(new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<IEnumerable<QuantityWiseSalesReportViewModel>> QuantityWiseSalesReport(QuantityWiseSalesReport request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "QuantityWiseSalesReport";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@StartDate", request.StartDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@EndDate", request.EndDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryAsync<QuantityWiseSalesReportViewModel>(query, parameter);
+                return result.ToList();
             }
         }
 
