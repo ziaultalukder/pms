@@ -258,9 +258,12 @@ namespace PMS.Helpers.Service
                 parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@PageNo", (request.CurrentPage - 1) * request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@ItemPerPage", request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@ItemPerPage", request.ItemsPerPage, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@TotalItem", 0, DbType.Int32, ParameterDirection.Output);
                 var result = await context.QueryAsync<SalesReportViewModel>(query, parameter);
+                int totalitems = parameter.Get<int>("@TotalItem");
 
-                return new PagedList<SalesReportViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, result.Count());
+                return new PagedList<SalesReportViewModel>(result.ToList(), request.CurrentPage, request.ItemsPerPage, totalitems);
             }
         }
 
