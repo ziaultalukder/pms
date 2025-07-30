@@ -185,7 +185,7 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 string conditionClause = " ";
-                string query = "select * from ClientWiseMedine_VW ";
+                string query = "select ClientWiseMedine_VW.*, count(*) over() as TotalItems from ClientWiseMedine_VW ";
 
                 if (!string.IsNullOrEmpty(request.MedicineName))
                 {
@@ -202,8 +202,14 @@ namespace PMS.Helpers.Service
                     query += " and ClientId = "+ _currentUserService.ClientId + " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 var clientWiseMedicine = await context.QueryAsync<ClientWiseMedicineViewModel>(query);
-                
-                return new PagedList<ClientWiseMedicineViewModel>(clientWiseMedicine.ToList(), request.CurrentPage, request.ItemsPerPage, clientWiseMedicine.Count());
+                string totalItemQuery = "SELECT  top 1 TotalItems FROM ( " + query + ")  AS result  ORDER BY TotalItems";
+                int totalItem = context.QueryFirstOrDefault<int>(totalItemQuery);
+                if (request.ItemsPerPage == 0)
+                {
+                    request.ItemsPerPage = totalItem;
+                }
+
+                return new PagedList<ClientWiseMedicineViewModel>(clientWiseMedicine.ToList(), request.CurrentPage, request.ItemsPerPage, totalItem);
             }
         }
         public async Task<Result> UpdateClient(UpdateClient request)

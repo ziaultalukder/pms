@@ -9,6 +9,7 @@ namespace PMS.Application.Request.Sales
 {
     public interface ISalesService
     {
+        Task<IEnumerable<DownloadSalesReportViewModel>> DownloadSalesReport(DownloadSalesReport request);
         Task<IEnumerable<GetClientWiseMedicineForSalesViewModel>> GetClientWiseMedicineForSales(GetClientWiseMedicineForSales request);
         Task<GetSalesByInvoiceNo> GetSaleByInvoice(GetSalesInfoForRefund request);
         Task<PagedList<GetSalesViewModel>> GetSales(GetSales request);

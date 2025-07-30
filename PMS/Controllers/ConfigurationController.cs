@@ -97,6 +97,7 @@ namespace PMS.Controllers
         public async Task<IActionResult> ClientWiseMedicine(string medicineName, string getAll, int currentPage, int itemsPerPage)
         {
             var result = await _mediator.Send(new GetClientWiseMedicine(medicineName, getAll, currentPage, itemsPerPage));
+            PaginationHeader.Add(Response, result.CurrentPage, result.ItemsPerPage, result.TotalPages, result.TotalItems);
             return Ok(result); 
         }
 

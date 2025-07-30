@@ -67,6 +67,13 @@ namespace PMS.Controllers
         }
         
         [HttpGet("[action]")]
+        public async Task<ActionResult> DownloadSalesReport(string startDate, string endDate)
+        {
+            var result = await _mediator.Send(new DownloadSalesReport(startDate, endDate));
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
         public async Task<ActionResult> QuantityWiseSalesReport(string startDate, string endDate)
         {
             var result = await _mediator.Send(new QuantityWiseSalesReport(startDate, endDate));

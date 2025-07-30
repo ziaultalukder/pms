@@ -23,6 +23,22 @@ namespace PMS.Helpers.Service
             /*Id = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);*/
         }
 
+        public async Task<IEnumerable<DownloadSalesReportViewModel>> DownloadSalesReport(DownloadSalesReport request)
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "DownloadSalesReport";
+                DynamicParameters parameter = new DynamicParameters();
+
+                parameter.Add("@StartDate", request.StartDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@EndDate", request.EndDate, DbType.String, ParameterDirection.Input);
+                parameter.Add("@ClientId", _currentUserService.ClientId, DbType.Int32, ParameterDirection.Input);
+                var result = await context.QueryAsync<DownloadSalesReportViewModel>(query, parameter);
+
+                return result.ToList();
+            }
+        }
+
         public async Task<IEnumerable<GetClientWiseMedicineForSalesViewModel>> GetClientWiseMedicineForSales(GetClientWiseMedicineForSales request)
        {
             using (var context = _dapperContext.CreateConnection())
