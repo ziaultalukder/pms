@@ -93,7 +93,7 @@ namespace PMS.Helpers.Service
             {
                 using (var context = _dapperContext.CreateConnection())
                 {
-                    string query = "select * from Users where Mobile = '"+ _currentUserService.ContactNo + "' ";
+                    string query = "select * from Users where Mobile = '" + _currentUserService.ContactNo + "' ";
                     var user = await context.QueryFirstOrDefaultAsync<Users>(query);
                     if (user == null)
                     {
@@ -103,7 +103,7 @@ namespace PMS.Helpers.Service
                     request.OldPassword = MD5Encryption.GetMD5HashData(request.OldPassword);
                     if (user.Password == request.OldPassword)
                     {
-                        var updateQryParameter = new { Password = MD5Encryption.GetMD5HashData(request.NewPassword), UserId = user.Id, UpdateBy=user.UpdateBy };
+                        var updateQryParameter = new { Password = MD5Encryption.GetMD5HashData(request.NewPassword), UserId = user.Id, UpdateBy = user.UpdateBy };
                         string updatePasswordQuery = "update Users set Password = @Password, UpdateBy=@UpdateBy, UpdateDate=GETDATE() where Id = @UserId";
                         var res = await context.QueryAsync(updatePasswordQuery, updateQryParameter);
 
@@ -169,12 +169,17 @@ namespace PMS.Helpers.Service
             {
                 return Result.Failure(new List<string> { "Password No is required" });
             }
-
             using (var context = _dapperContext.CreateConnection())
             {
                 var parameter = new { ContactNO = request.ContactNo };
-                string query = "SELECT Id, Name, Email, Mobile, ClientId, Password, IsActive, Status, ISNULL(IsClientUser, 'N') IsClientUser FROM Users where Mobile = @ContactNo";
+
+                string query = "SELECT Id, Name, Email, Mobile, ClientId, Password, IsActive, Status, ISNULL(IsClientUser, 'N') IsClientUser, StartDate, EndDate FROM Users where Mobile = @ContactNo";
+
                 var userData = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
+                if (userData.EndDate < DateTime.Now.Date)
+                {
+                    return Result.Failure(new List<string> { "Your Account Is Expired!!" });
+                }
                 if (userData.IsActive == "N")
                 {
                     return Result.Failure(new List<string> { "Your Account Is DeActivated!!" });
@@ -263,7 +268,7 @@ namespace PMS.Helpers.Service
         {
             using (var context = _dapperContext.CreateConnection())
             {
-                var sql = "select Id, Name, Email, Mobile, IsActive from Users where ClientId ="+_currentUserService.ClientId+ " and IsClientUser = 'Y'";
+                var sql = "select Id, Name, Email, Mobile, IsActive from Users where ClientId =" + _currentUserService.ClientId + " and IsClientUser = 'Y'";
                 return context.Query<ClientUserViewModel>(sql).ToList();
             }
         }

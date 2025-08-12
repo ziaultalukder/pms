@@ -7,21 +7,27 @@ namespace PMS.Application.Request.Configuration.Command
 {
     public class AddClient : IRequest<Result>
     {
+        public int SubscriptionPlanId { get; set; }
         public string Name { get; set; }
         public string ShopName { get; set; }
         public string Address { get; set; }
         public string ContactNo { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public string BillingCycle { get; set; }
+        public int SubscriptionValue { get; set; }
 
-        public AddClient(string name, string shopName, string address, string contactNo, string email, string password)
+        public AddClient(int subscriptionPlanId, string name, string shopName, string address, string contactNo, string email, string password, string billingCycle, int subscriptionValue)
         {
+            SubscriptionPlanId = subscriptionPlanId;
             Name = name;
             ShopName = shopName;
             Address = address;
             ContactNo = contactNo;
             Email = email;
             Password = password;
+            BillingCycle = billingCycle;
+            SubscriptionValue= subscriptionValue;
         }
     }
 

@@ -18,5 +18,7 @@ namespace PMS.Domain.Models
         public string IsActive { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public string IsClientUser { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

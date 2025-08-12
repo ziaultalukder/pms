@@ -24,5 +24,7 @@ namespace PMS.Application.Request.Configuration
         Task<PagedList<GetUserUploadItemViewModel>> GetUserUploadItem(GetUserUploadItem request);
         Task<Result> AddSupplier(AddSupplier request);
         Task<IEnumerable<SupplierByNameViewModel>> SupplierByName(SupplierByName request);
+        Task<Result> AddOrEditSubscription(AddOrEditSubscription request);
+        Task<IEnumerable<Subscription>> GetSubscription();
     }
 }

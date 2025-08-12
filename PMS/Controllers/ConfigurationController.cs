@@ -9,6 +9,7 @@ using PMS.Application.Request.Account.Command;
 using PMS.Application.Request.Account.Query;
 using PMS.Application.Request.Configuration.Command;
 using PMS.Application.Request.Configuration.Query;
+using PMS.Models;
 using PMS.ViewModel;
 using System.Collections.Generic;
 
@@ -172,6 +173,20 @@ namespace PMS.Controllers
         public async Task<IActionResult> SendToken(SendToken command)
         {
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddOrEditSubscription(AddOrEditSubscription command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSubscription()
+        {
+            var result = await _mediator.Send(new GetSubscription());
             return Ok(result);
         }
     }

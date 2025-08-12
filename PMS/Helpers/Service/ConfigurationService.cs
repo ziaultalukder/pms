@@ -10,6 +10,7 @@ using PMS.Helpers.Interface;
 using PMS.Models;
 using PMS.ViewModel;
 using System.Data;
+using System.Reflection.Metadata;
 
 namespace PMS.Helpers.Service
 {
@@ -28,7 +29,7 @@ namespace PMS.Helpers.Service
         {
             try
             {
-                using(var context = _dapperContext.CreateConnection())
+                using (var context = _dapperContext.CreateConnection())
                 {
                     string conditionClause = " ";
                     string query = "select SL, ManufacturerName, BrandName, GenericName, Strength, DosageDescription, count(*) over() as TotalItems from MedicineList ";
@@ -150,10 +151,10 @@ namespace PMS.Helpers.Service
         {
             using (var context = _dapperContext.CreateConnection())
             {
-                if(request.Name is not null)
+                if (request.Name is not null)
                 {
-                    string qry = "declare @clientId int\r\nset @clientId = "+_currentUserService.ClientId+ ";\r\nselect \r\n\tM.SL, \r\n\tM.ManufacturerName,\r\n\tCASE WHEN M.Strength is null and M.DosageDescription is null THEN M.BrandName ELSE CONCAT(M.BrandName, ' - ' ,M.Strength, ' - ', DosageDescription) END AS BrandName,\r\n\tISNULL(abc.SalesPrice, 0) SalesPrice, \r\n\tISNULL(abc.PurchasePrice, 0) PurchasePrice,\r\n\tcase \r\n\twhen ISNULL(abc.ClientId, 0) = " + _currentUserService.ClientId+"\r\n\tthen ISNULL(abc.Quantity, 0) else 0\r\n\tend as Quantity\r\nfrom (\r\n\tselect MedicineId, ClientId, Quantity, PurchasePrice, SalesPrice from ClientWiseMedicine where ClientId ="+_currentUserService.ClientId+"\r\n) abc right join MedicineList M on M.SL = abc.MedicineId\r\nwhere M.BrandName like '"+ request.Name.Trim() + "%'";
-                    
+                    string qry = "declare @clientId int\r\nset @clientId = " + _currentUserService.ClientId + ";\r\nselect \r\n\tM.SL, \r\n\tM.ManufacturerName,\r\n\tCASE WHEN M.Strength is null and M.DosageDescription is null THEN M.BrandName ELSE CONCAT(M.BrandName, ' - ' ,M.Strength, ' - ', DosageDescription) END AS BrandName,\r\n\tISNULL(abc.SalesPrice, 0) SalesPrice, \r\n\tISNULL(abc.PurchasePrice, 0) PurchasePrice,\r\n\tcase \r\n\twhen ISNULL(abc.ClientId, 0) = " + _currentUserService.ClientId + "\r\n\tthen ISNULL(abc.Quantity, 0) else 0\r\n\tend as Quantity\r\nfrom (\r\n\tselect MedicineId, ClientId, Quantity, PurchasePrice, SalesPrice from ClientWiseMedicine where ClientId =" + _currentUserService.ClientId + "\r\n) abc right join MedicineList M on M.SL = abc.MedicineId\r\nwhere M.BrandName like '" + request.Name.Trim() + "%'";
+
                     var medicineNameList = await context.QueryAsync<MedicineListByNameViewModel>(qry);
                     return medicineNameList.ToList();
                 }
@@ -167,10 +168,10 @@ namespace PMS.Helpers.Service
         {
             using (var context = _dapperContext.CreateConnection())
             {
-                if(request.Name is not null)
+                if (request.Name is not null)
                 {
-                    string qry = "select Id, Name from Supplier Where Name like '%"+request.Name+"%'";
-                    
+                    string qry = "select Id, Name from Supplier Where Name like '%" + request.Name + "%'";
+
                     var medicineNameList = await context.QueryAsync<SupplierByNameViewModel>(qry);
                     return medicineNameList.ToList();
                 }
@@ -199,7 +200,7 @@ namespace PMS.Helpers.Service
                 }
                 else
                 {
-                    query += " and ClientId = "+ _currentUserService.ClientId + " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                    query += " and ClientId = " + _currentUserService.ClientId + " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
                 }
                 var clientWiseMedicine = await context.QueryAsync<ClientWiseMedicineViewModel>(query);
                 string totalItemQuery = "SELECT  top 1 TotalItems FROM ( " + query + ")  AS result  ORDER BY TotalItems";
@@ -214,6 +215,36 @@ namespace PMS.Helpers.Service
         }
         public async Task<Result> UpdateClient(UpdateClient request)
         {
+            /*
+                 * Monthly Subscription Plan Id is required 
+                 * yearly 365
+                 * quarterly 183
+                 * free trial 5 days
+                 */
+            DateTime StartDate = new DateTime();
+            DateTime EndDate = new DateTime();
+            if (request.SubscriptionPlanId <= 0)
+            {
+                return Result.Failure(new List<string> { "SubscriptionPlanId is required" });
+            }
+            if (string.IsNullOrEmpty(request.BillingCycle))
+            {
+                return Result.Failure(new List<string> { "BillingCycle is required" });
+            }
+            if (!string.IsNullOrEmpty(request.BillingCycle))
+            {
+                // Handle billing cycle logic here
+                if (request.BillingCycle.ToLower() == "yearly")
+                {
+                    StartDate = DateTime.Now.Date;
+                    EndDate = StartDate.AddYears(request.SubscriptionValue);
+                }
+                else
+                {
+                    StartDate = DateTime.Now.Date;
+                    EndDate = StartDate.AddDays(request.SubscriptionValue);
+                }
+            }
             if (string.IsNullOrEmpty(request.Name))
             {
                 return Result.Failure(new List<string> { "Name is required" });
@@ -233,11 +264,14 @@ namespace PMS.Helpers.Service
                 DynamicParameters parameter = new DynamicParameters();
 
                 parameter.Add("@Id", request.Id, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@SubscriptionPlanId", request.SubscriptionPlanId, DbType.Int32, ParameterDirection.Input);
                 parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
                 parameter.Add("@ShopName", request.ShopName, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Address", request.Address, DbType.String, ParameterDirection.Input);
                 parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
                 parameter.Add("@Email", request.Email, DbType.String, ParameterDirection.Input);
+                parameter.Add("@StartDate", StartDate, DbType.DateTime, ParameterDirection.Input);
+                parameter.Add("@EndDate", EndDate, DbType.DateTime, ParameterDirection.Input);
                 parameter.Add("@CreateBy", _currentUserService.UserId, DbType.String, ParameterDirection.Input);
                 parameter.Add("@MESSAGE", "", DbType.Int32, ParameterDirection.Output);
 
@@ -258,10 +292,37 @@ namespace PMS.Helpers.Service
         {
             try
             {
-                if (string.IsNullOrEmpty(request.Name))
+                /*
+                 * Monthly Subscription Plan Id is required 
+                 * yearly 365
+                 * quarterly 183
+                 * free trial 5 days
+                 */
+                DateTime StartDate = new DateTime();
+                DateTime EndDate = new DateTime();
+                if (request.SubscriptionPlanId <= 0)
                 {
-                    return Result.Failure(new List<string> { "Name is required" });
+                    return Result.Failure(new List<string> { "SubscriptionPlanId is required" });
                 }
+                if (string.IsNullOrEmpty(request.BillingCycle))
+                {
+                    return Result.Failure(new List<string> { "BillingCycle is required" });
+                }
+                if (!string.IsNullOrEmpty(request.BillingCycle))
+                {
+                    // Handle billing cycle logic here
+                    if (request.BillingCycle.ToLower() == "yearly")
+                    {
+                        StartDate = DateTime.Now.Date;
+                        EndDate = StartDate.AddYears(request.SubscriptionValue);
+                    }
+                    else
+                    {
+                        StartDate = DateTime.Now.Date;
+                        EndDate = StartDate.AddDays(request.SubscriptionValue);
+                    }
+                }
+
                 if (string.IsNullOrEmpty(request.ShopName))
                 {
                     return Result.Failure(new List<string> { "ShopName is required" });
@@ -291,12 +352,15 @@ namespace PMS.Helpers.Service
                     DynamicParameters parameter = new DynamicParameters();
 
                     parameter.Add("@Id", 0, DbType.Int32, ParameterDirection.Input);
+                    parameter.Add("@SubscriptionPlanId", 0, DbType.Int32, ParameterDirection.Input);
                     parameter.Add("@Name", request.Name, DbType.String, ParameterDirection.Input);
                     parameter.Add("@ShopName", request.ShopName, DbType.String, ParameterDirection.Input);
                     parameter.Add("@Address", request.Address, DbType.String, ParameterDirection.Input);
                     parameter.Add("@ContactNo", request.ContactNo, DbType.String, ParameterDirection.Input);
                     parameter.Add("@Email", request.Email, DbType.String, ParameterDirection.Input);
                     parameter.Add("@Password", request.Password, DbType.String, ParameterDirection.Input);
+                    parameter.Add("@StartDate", StartDate, DbType.DateTime, ParameterDirection.Input);
+                    parameter.Add("@EndDate", EndDate, DbType.DateTime, ParameterDirection.Input);
                     parameter.Add("@CreateBy", Id, DbType.String, ParameterDirection.Input);
                     parameter.Add("@MESSAGE", "", DbType.Int32, ParameterDirection.Output);
 
@@ -343,7 +407,7 @@ namespace PMS.Helpers.Service
                 {
                     return Result.Failure(new List<string> { "BrandName is required" });
                 }
-                
+
                 using (var context = _dapperContext.CreateConnection())
                 {
                     string query = "InsertMedicine";
@@ -462,6 +526,55 @@ namespace PMS.Helpers.Service
                 int res = parameter.Get<int>("@Message");
 
                 return Result.Success("Save Success");
+            }
+        }
+
+        public async Task<Result> AddOrEditSubscription(AddOrEditSubscription request)
+        {
+            if (string.IsNullOrEmpty(request.Name) || request.Price < 0 || string.IsNullOrEmpty(request.BillingCycle))
+            {
+                return Result.Failure(new List<string> { "Name, Price and Billing Cycle are required" });
+            }
+            using (var context = _dapperContext.CreateConnection())
+            {
+                if (request.Id > 0)
+                {
+                    string query = "UPDATE [dbo].[SubscriptionPlans] SET [Name] = '" + request.Name + "' ,[Description] = '" + request.Description + "',    [Price] = " + request.Price + ", [BillingCycle] = '" + request.BillingCycle + "' ,[IsActive] = '" + request.IsActive + "' ,[UpdateBy] = " + _currentUserService.UserId + ", [Updatedate] = GETDATE() WHERE Id =" + request.Id;
+
+                    var result = await context.ExecuteAsync(query);
+                    if (result > 0)
+                    {
+                        return Result.Success("Subscription Plan Updated Successfully");
+                    }
+                    else
+                    {
+                        return Result.Failure(new List<string> { "Failed to Update Subscription Plan" });
+                    }
+                }
+                else
+                {
+                    string query = "INSERT INTO [dbo].[SubscriptionPlans]([Name],[Description],[Price],[BillingCycle],[IsActive],[CreateBy],[CreateDate])VALUES('" + request.Name + "', '" + request.Description + "', " + request.Price + ", '" + request.BillingCycle + "', '" + request.IsActive + "', " + _currentUserService.UserId + ", GETDATE())";
+
+                    var result = await context.ExecuteAsync(query);
+                    if (result > 0)
+                    {
+                        return Result.Success("Subscription Plan Added Successfully");
+                    }
+                    else
+                    {
+                        return Result.Failure(new List<string> { "Failed to Add Subscription Plan" });
+                    }
+                }
+            }
+        }
+
+        public async Task<IEnumerable<Subscription>> GetSubscription()
+        {
+            using (var context = _dapperContext.CreateConnection())
+            {
+                string query = "SELECT SubscriptionPlans.*, CONCAT(Name, '->', BillingCycle) SPlan FROM SubscriptionPlans";
+                var result = await context.QueryAsync<Subscription>(query);
+                return result.ToList();
             }
         }
     }
