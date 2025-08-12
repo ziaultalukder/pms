@@ -16,5 +16,10 @@ namespace PMS.Domain.Models
         public string ContactNo { get; set; }
         public string Email { get; set; }
         public string IsActive { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string SubscriptionPlan { get; set; }
+        public decimal Price { get; set; }
+        public string BillingCycle { get; set; }
     }
 }

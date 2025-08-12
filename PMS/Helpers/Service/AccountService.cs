@@ -176,10 +176,10 @@ namespace PMS.Helpers.Service
                 string query = "SELECT Id, Name, Email, Mobile, ClientId, Password, IsActive, Status, ISNULL(IsClientUser, 'N') IsClientUser, StartDate, EndDate FROM Users where Mobile = @ContactNo";
 
                 var userData = await context.QueryFirstOrDefaultAsync<Users>(query, parameter);
-                if (userData.EndDate < DateTime.Now.Date)
+                /*if (userData.EndDate < DateTime.Now.Date)
                 {
                     return Result.Failure(new List<string> { "Your Account Is Expired!!" });
-                }
+                }*/
                 if (userData.IsActive == "N")
                 {
                     return Result.Failure(new List<string> { "Your Account Is DeActivated!!" });

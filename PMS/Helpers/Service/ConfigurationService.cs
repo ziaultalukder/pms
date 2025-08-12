@@ -68,7 +68,7 @@ namespace PMS.Helpers.Service
             using (var context = _dapperContext.CreateConnection())
             {
                 string conditionClause = " ";
-                string query = "SELECT Client.* , count(*) over() as TotalItems from Client ";
+                string query = "SELECT GetClient.* , count(*) over() as TotalItems from GetClient ";
                 if (request.Id > 0)
                 {
                     query += Helper.GetSqlCondition(conditionClause, "AND") + " Id = " + request.Id;
