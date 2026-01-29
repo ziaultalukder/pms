@@ -45,6 +45,7 @@ namespace PMS.Controllers
             _cache.Set("Data", strings);*/
 
             var result = await _mediator.Send(new PopularMedicine());
+            if (result == null) return NotFound();
             return Ok(result);
         }
         
