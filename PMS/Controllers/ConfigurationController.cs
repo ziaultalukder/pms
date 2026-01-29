@@ -54,7 +54,7 @@ namespace PMS.Controllers
         public async Task<IActionResult> GetDivision()
         {
             var result = await _mediator.Send(new GetDivision());
-            if (result == null) { return NotFound(); }
+            if (result == null) return NotFound();
             return Ok(result);
         }
         
