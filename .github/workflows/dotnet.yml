@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+
+run: echo "hello world"
+
 jobs:
   build:
 
@@ -21,7 +24,6 @@ jobs:
       with:
         dotnet-version: 8.0.x
       
-      run: echo "hello world"
     # - name: Restore dependencies
     #   run: dotnet restore
     # - name: Build
