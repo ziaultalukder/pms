@@ -1,6 +1,7 @@
 name: my first workflow
 on:
-  push: ["main"]
+  push:
+    branches: ["main"]
 
 name: print the value
 run: echo "hellow world"
