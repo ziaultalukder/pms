@@ -15,9 +15,14 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-      
+
+    - name: Echo message
+      run: echo "Starting the workflow" 
+
     - name: Restore dependencies
-      run: dotnet restore
+      run: |
+        echo "Restore dependencies...." 
+        dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Test
