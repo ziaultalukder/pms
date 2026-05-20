@@ -10,7 +10,7 @@ on:
   #   branches: [ "main" ]
 
 
-run: echo "hello world"
+# run: echo "hello world"
 
 jobs:
   build:
