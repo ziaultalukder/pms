@@ -33,6 +33,8 @@ builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IHospitalService, HospitalService>();
 builder.Services.AddScoped<IPostService, PostService>();
 //builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
 builder.Services.AddControllers();
 
