@@ -4,9 +4,6 @@ on:
   push:
     branches: [ "main" ]
 
-name: Echo message
-run: echo "Starting the workflow" 
-
 jobs:
   build:
 
