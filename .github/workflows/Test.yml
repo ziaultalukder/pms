@@ -16,14 +16,18 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Set current date
+      run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+    - name: Use the date
+      run: echo "The date is ${{ env.NOW }}"
+
     - name: Echo message
       run: | 
         echo "Starting the workflow" 
         echo "Branch = ${{ github.ref }}"
-        echo "DATE=$(date +%Y%m%d)" >> $GITHUB_ENV
         echo "MY_NAME=Ziaul" >> $GITHUB_ENV
         echo "My name is $MY_NAME"
-        echo "My date is $DATE"
         echo "Repository = ${{ github.repository }}"
         echo "Branch = ${{ github.ref }}"
         echo "Runner OS = $RUNNER_OS"
