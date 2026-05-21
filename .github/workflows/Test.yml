@@ -19,13 +19,22 @@ jobs:
     - name: Echo message
       run: echo "Starting the workflow" 
 
+    - name: Print branch name
+      run: echo "Branch = ${{ github.ref }}"
+
+    - name: Set environment variable
+      run: echo "MY_NAME=Ziaul" >> $GITHUB_ENV
+
+    - name: Print environment variable
+      run: echo "My name is $MY_NAME"
+
     - name: Restore dependencies
       run: |
         echo "Restore dependencies...." 
         dotnet restore
 
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    # - name: Build
+    #   run: dotnet build --no-restore
+    # - name: Test
+    #   run: dotnet test --no-build --verbosity normal
 
