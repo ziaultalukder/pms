@@ -1,0 +1,27 @@
+name: Multiple Job workflow
+
+on:
+  push: 
+    branches: ["main"]
+
+jobs:
+
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running build job"
+
+  
+  development:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running development job"
+
+  Production:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying Production application"
+
