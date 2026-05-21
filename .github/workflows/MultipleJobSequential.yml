@@ -1,4 +1,4 @@
-name: Multiple Job workflow
+name: Multiple Job Sequntial
 
 on:
   push: 
@@ -20,7 +20,7 @@ jobs:
       - run: echo "Running development job"
 
   Production:
-    needs: build
+    needs: development
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploying Production application"
