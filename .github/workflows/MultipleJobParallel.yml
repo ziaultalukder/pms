@@ -1,0 +1,19 @@
+name: Multiple Job Parallel
+
+on:
+  push: 
+    branches: ["main"]
+
+jobs:
+
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Frontend build"
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Backend build"
+
