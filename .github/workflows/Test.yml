@@ -17,7 +17,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Set current date
-      run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      run: echo "NOW=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
     - name: Use the date
       run: echo "The date is ${{ env.NOW }}"
