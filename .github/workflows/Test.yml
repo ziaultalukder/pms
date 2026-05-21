@@ -17,16 +17,14 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Echo message
-      run: echo "Starting the workflow" 
-
-    - name: Print branch name
-      run: echo "Branch = ${{ github.ref }}"
-
-    - name: Set environment variable
-      run: echo "MY_NAME=Ziaul" >> $GITHUB_ENV
-
-    - name: Print environment variable
-      run: echo "My name is $MY_NAME"
+      run: | 
+        echo "Starting the workflow" 
+        echo "Branch = ${{ github.ref }}"
+        echo "MY_NAME=Ziaul" >> $GITHUB_ENV
+        echo "My name is $MY_NAME"
+        echo "Repository = ${{ github.repository }}"
+        echo "Branch = ${{ github.ref }}"
+        echo "Runner OS = $RUNNER_OS"
 
     - name: Restore dependencies
       run: |
