@@ -20,8 +20,10 @@ jobs:
       run: | 
         echo "Starting the workflow" 
         echo "Branch = ${{ github.ref }}"
+        echo "DATE=$(date +%Y%m%d)" >> $GITHUB_ENV
         echo "MY_NAME=Ziaul" >> $GITHUB_ENV
         echo "My name is $MY_NAME"
+        echo "My date is $DATE"
         echo "Repository = ${{ github.repository }}"
         echo "Branch = ${{ github.ref }}"
         echo "Runner OS = $RUNNER_OS"

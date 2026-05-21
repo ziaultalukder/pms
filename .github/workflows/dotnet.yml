@@ -30,7 +30,7 @@ jobs:
       run: |
         echo "DATE=$(date +%Y%m%d)" >> $GITHUB_ENV
         echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-        echo "date is $DATE"
+        echo "sha is $SHORT_SHA"
 
       
     # - name: Set up Docker Buildx
