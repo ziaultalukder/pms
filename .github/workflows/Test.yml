@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "main" ]
 
+name: Echo message
+run: echo "Starting the workflow" 
+
 jobs:
   build:
 
@@ -23,6 +26,7 @@ jobs:
       run: |
         echo "Restore dependencies...." 
         dotnet restore
+
     - name: Build
       run: dotnet build --no-restore
     - name: Test
