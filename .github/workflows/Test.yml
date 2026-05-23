@@ -1,61 +1,60 @@
 name: first workflow
 
-on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        type: choice
-        options:
-          - staging
-          - production
-      debug:
-        description: 'Enable debug mode'
-        required: false
-        type: boolean
-        default: false
-        
 # on:
-#   workflow_dispatch
-#   # push:
-#   #   branches: [ "main" ]
+#   workflow_dispatch:
+#     inputs:
+#       environment:
+#         description: 'Environment to deploy to'
+#         required: true
+#         type: choice
+#         options:
+#           - staging
+#           - production
+#       debug:
+#         description: 'Enable debug mode'
+#         required: false
+#         type: boolean
+#         default: false
 
-# jobs:
-#   build:
+on:
+  push:
+    branches: [ "main" ]
 
-#     runs-on: ubuntu-latest
+jobs:
+  build:
 
-#     steps:
-#     - uses: actions/checkout@v4
-#     - name: Setup .NET
-#       uses: actions/setup-dotnet@v4
-#       with:
-#         dotnet-version: 8.0.x
+    runs-on: ubuntu-latest
 
-#     - name: Set current date
-#       run: echo "NOW=$(date +'%Y%m%d')" >> $GITHUB_ENV
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
 
-#     - name: Use the date
-#       run: echo "The date is ${{ env.NOW }}"
+    - name: Set current date
+      run: echo "NOW=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-#     - name: Echo message
-#       run: | 
-#         echo "Starting the workflow" 
-#         echo "Branch = ${{ github.ref }}"
-#         echo "MY_NAME=Ziaul" >> $GITHUB_ENV
-#         echo "My name is $MY_NAME"
-#         echo "Repository = ${{ github.repository }}"
-#         echo "Branch = ${{ github.ref }}"
-#         echo "Runner OS = $RUNNER_OS"
+    - name: Use the date
+      run: echo "The date is ${{ env.NOW }}"
 
-#     - name: Restore dependencies
-#       run: |
-#         echo "Restore dependencies...." 
-#         dotnet restore
+    - name: Echo message
+      run: | 
+        echo "Starting the workflow" 
+        echo "Branch = ${{ github.ref }}"
+        echo "MY_NAME=Ziaul" >> $GITHUB_ENV
+        echo "My name is $MY_NAME"
+        echo "Repository = ${{ github.repository }}"
+        echo "Branch = ${{ github.ref }}"
+        echo "Runner OS = $RUNNER_OS"
 
-    # - name: Build
-    #   run: dotnet build --no-restore
-    # - name: Test
-    #   run: dotnet test --no-build --verbosity normal
+    - name: Restore dependencies
+      run: |
+        echo "Restore dependencies...." 
+        dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
 
