@@ -82,6 +82,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 var app = builder.Build();
 
+// Add the custom JWT logging middleware here
+/*app.UseMiddleware<JwtLoggingMiddleware>();*/
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
