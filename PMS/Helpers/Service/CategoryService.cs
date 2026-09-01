@@ -30,7 +30,7 @@ namespace PMS.Helpers.Service
         {
             using (var context = _dapperContext.CreateConnection())
             {
-                string query = "GetMedicalDepartmentName";
+                string query = "select Id, Name from Category where CategoryTypeId = 1";
                 DynamicParameters parameter = new DynamicParameters();
 
                 var result = await context.QueryAsync<MedicalDepartmentNameViewModel>(query);

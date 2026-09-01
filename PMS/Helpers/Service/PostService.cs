@@ -143,7 +143,7 @@ namespace PMS.Helpers.Service
                     conditionClause = " WHERE ";
                 }
 
-                query += " order by Id OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
+                query += " order by Id desc OFFSET " + ((request.CurrentPage - 1) * request.ItemsPerPage) + " ROWS FETCH NEXT " + request.ItemsPerPage + " ROWS ONLY ";
 
                 var postList = await context.QueryAsync<GetPostViewModel>(query);
 
